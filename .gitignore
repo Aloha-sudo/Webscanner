@@ -1,0 +1,41 @@
+# Runtime data and local backups
+/scans/
+/backups/
+/release/
+/github-release/
+*.dump
+*.sql
+*.sqlite
+*.sqlite3
+*.db
+# Local environment and credentials
+.env
+.env.*
+!.env.example
+.aws/
+.codex/
+.agents/
+*.pem
+*.key
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.coverage
+htmlcov/
+# Node and build output
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+# Local artifacts
+*.log
+*.bak*
+/core
+core.[0-9]*
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

@@ -1,0 +1,114 @@
+{
+  "captured_at": "2026-10-23T15:06:00.108Z",
+  "theme": "dark",
+  "language": "en",
+  "timezone": "UTC",
+  "viewport": {
+    "width": 1600,
+    "height": 1050
+  },
+  "source": "Actual WebScanner frontend with synthetic intercepted API responses",
+  "backend_writes": 0,
+  "unexpected_requests": [],
+  "browser_errors": [],
+  "shots": [
+    {
+      "file": "01-overview-dark.png",
+      "en": "Scan overview",
+      "ru": "Обзор сканирования",
+      "bytes": 292392,
+      "sha256": "67659a310f8a6c1d1ba94aab914d7d393000a9ae0f68e05b7cf808bb70f016ea"
+    },
+    {
+      "file": "02-scan-results-dark.png",
+      "en": "Scan details and host filters",
+      "ru": "Результаты скана и фильтры",
+      "bytes": 232225,
+      "sha256": "346962b166eb57292997afcf16559a21630bf28de2d627776cbed6cafea8ae1d"
+    },
+    {
+      "file": "03-host-card-dark.png",
+      "en": "Host card, DNS evidence and web metadata",
+      "ru": "Карточка хоста, DNS и веб-метаданные",
+      "bytes": 27575,
+      "sha256": "7e95dabc8a381654f9f7a028fa263678b89c11eaea4b5796a09ce004498f2e66"
+    },
+    {
+      "file": "04-dns-settings-dark.png",
+      "en": "Compact DNS lookup controls",
+      "ru": "Компактные настройки DNS",
+      "bytes": 245704,
+      "sha256": "921d7d642105de1b93d04204de11e134b8ca1d3f9e5f93d4a373fa7f29dbeea2"
+    },
+    {
+      "file": "05-screenshot-gallery-dark.png",
+      "en": "Web-service screenshot gallery",
+      "ru": "Галерея скриншотов сервисов",
+      "bytes": 267654,
+      "sha256": "63efdd2a9c9588d1526507bcb0dc65f770de6c9625eb62e2fd4816107940db09"
+    },
+    {
+      "file": "06-screenshot-viewer-dark.png",
+      "en": "Full screenshot viewer",
+      "ru": "Просмотр скриншота",
+      "bytes": 163069,
+      "sha256": "426def0cdb7d0dff0faaa637adbf6d3d02aacc702f515c843e115a4c1be23d51"
+    },
+    {
+      "file": "07-comparison-dark.png",
+      "en": "Before and after report comparison",
+      "ru": "Сравнение двух отчётов",
+      "bytes": 256775,
+      "sha256": "71012e872220caf4af133d56f8a835369ae2ff0cc63081eea4da01528eca7520"
+    },
+    {
+      "file": "08-network-map-dark.png",
+      "en": "Multilevel service reachability map",
+      "ru": "Многоуровневая карта",
+      "bytes": 83925,
+      "sha256": "74cf0ffaa7154a79c929804fd26834552159efb1fe3a592c3c1833458bdf0e51"
+    },
+    {
+      "file": "09-neighborhood-dark.png",
+      "en": "Incoming and outgoing host observations",
+      "ru": "Окружение хоста",
+      "bytes": 108262,
+      "sha256": "926813a682b8b7b70a3fda314cd43fe5c2dd356c36ceb66e8ef2c748d0561ae6"
+    },
+    {
+      "file": "10-service-visibility-dark.png",
+      "en": "Who observed this service?",
+      "ru": "Кто видит сервис?",
+      "bytes": 116954,
+      "sha256": "4449c3a2c14bfd82f0d3ad757edf0aa1620044339bb6e7f87ff0bbea4469d9b6"
+    },
+    {
+      "file": "11-observation-path-dark.png",
+      "en": "Directed observation path and evidence",
+      "ru": "Путь по наблюдениям и отчёты",
+      "bytes": 200495,
+      "sha256": "a7e7cc12dec8c2a95b681eeb16e1a4f05c0a32da223df9eec99873947f09dd43"
+    },
+    {
+      "file": "12-evidence-table-dark.png",
+      "en": "Source-by-service evidence matrix",
+      "ru": "Матрица доступности",
+      "bytes": 173967,
+      "sha256": "59305cd1a50ea2ec7ecfa642cb9ceccbbc07df7e216f8107961e691e03e244e6"
+    },
+    {
+      "file": "13-project-description-dark.png",
+      "en": "Project description and saved map",
+      "ru": "Описание проекта и сохранённая карта",
+      "bytes": 184801,
+      "sha256": "8a5a74d233403b764e4f9509cd5251efd2eb9742acabcbdccc37bdbea72d06f9"
+    },
+    {
+      "file": "14-project-import-dark.png",
+      "en": "Project archive import preview",
+      "ru": "Предпросмотр импорта проекта",
+      "bytes": 190337,
+      "sha256": "8c3450d34823eefa281589bd1c339c4b637d681e9105ea19e5d2412b1f39d0ed"
+    }
+  ]
+}

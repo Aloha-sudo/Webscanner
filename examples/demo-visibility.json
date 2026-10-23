@@ -1,0 +1,466 @@
+{
+  "columns": [
+    {
+      "id": 1,
+      "target": "demo-source-1.json",
+      "source_host": "192.0.2.10 Analyst",
+      "author": "Demo dataset",
+      "observed_at": "2026-10-23T09:30:00+00:00",
+      "created_at": "2026-10-23T09:30:00+00:00",
+      "scope_confirmed": false,
+      "scope_targets": null,
+      "scope_ports": null,
+      "network": "Documentation lab",
+      "network_part_id": 1
+    },
+    {
+      "id": 2,
+      "target": "demo-source-2.json",
+      "source_host": "192.0.2.20 Jump host",
+      "author": "Demo dataset",
+      "observed_at": "2026-10-23T09:40:00+00:00",
+      "created_at": "2026-10-23T09:40:00+00:00",
+      "scope_confirmed": false,
+      "scope_targets": null,
+      "scope_ports": null,
+      "network": "Documentation lab",
+      "network_part_id": 1
+    },
+    {
+      "id": 3,
+      "target": "demo-source-3.json",
+      "source_host": "192.0.2.30 App gateway",
+      "author": "Demo dataset",
+      "observed_at": "2026-10-23T09:50:00+00:00",
+      "created_at": "2026-10-23T09:50:00+00:00",
+      "scope_confirmed": false,
+      "scope_targets": null,
+      "scope_ports": null,
+      "network": "Documentation lab",
+      "network_part_id": 1
+    }
+  ],
+  "rows": [
+    {
+      "device_id": "[1, \"192.0.2.10\"]",
+      "ip": "192.0.2.10",
+      "protocol": "host",
+      "port": 0,
+      "network": "Documentation lab",
+      "network_part_id": 1,
+      "parts": [
+        "Documentation lab"
+      ],
+      "hostname": "analyst.example",
+      "cells": [
+        {
+          "report_id": 1,
+          "state": "found",
+          "service": null,
+          "version": null
+        },
+        {
+          "report_id": 2,
+          "state": "unknown",
+          "service": null,
+          "version": null
+        },
+        {
+          "report_id": 3,
+          "state": "unknown",
+          "service": null,
+          "version": null
+        }
+      ]
+    },
+    {
+      "device_id": "[1, \"192.0.2.20\"]",
+      "ip": "192.0.2.20",
+      "protocol": "host",
+      "port": 0,
+      "network": "Documentation lab",
+      "network_part_id": 1,
+      "parts": [
+        "Documentation lab"
+      ],
+      "hostname": "jump.example",
+      "cells": [
+        {
+          "report_id": 1,
+          "state": "found",
+          "service": null,
+          "version": null
+        },
+        {
+          "report_id": 2,
+          "state": "unknown",
+          "service": null,
+          "version": null
+        },
+        {
+          "report_id": 3,
+          "state": "unknown",
+          "service": null,
+          "version": null
+        }
+      ]
+    },
+    {
+      "device_id": "[1, \"192.0.2.20\"]",
+      "ip": "192.0.2.20",
+      "protocol": "tcp",
+      "port": 22,
+      "network": "Documentation lab",
+      "network_part_id": 1,
+      "parts": [
+        "Documentation lab"
+      ],
+      "hostname": "jump.example",
+      "cells": [
+        {
+          "report_id": 1,
+          "state": "found",
+          "service": "ssh",
+          "version": null
+        },
+        {
+          "report_id": 2,
+          "state": "unknown",
+          "service": null,
+          "version": null
+        },
+        {
+          "report_id": 3,
+          "state": "unknown",
+          "service": null,
+          "version": null
+        }
+      ]
+    },
+    {
+      "device_id": "[1, \"192.0.2.30\"]",
+      "ip": "192.0.2.30",
+      "protocol": "host",
+      "port": 0,
+      "network": "Documentation lab",
+      "network_part_id": 1,
+      "parts": [
+        "Documentation lab"
+      ],
+      "hostname": "app-gateway.example",
+      "cells": [
+        {
+          "report_id": 1,
+          "state": "unknown",
+          "service": null,
+          "version": null
+        },
+        {
+          "report_id": 2,
+          "state": "found",
+          "service": null,
+          "version": null
+        },
+        {
+          "report_id": 3,
+          "state": "unknown",
+          "service": null,
+          "version": null
+        }
+      ]
+    },
+    {
+      "device_id": "[1, \"192.0.2.30\"]",
+      "ip": "192.0.2.30",
+      "protocol": "tcp",
+      "port": 22,
+      "network": "Documentation lab",
+      "network_part_id": 1,
+      "parts": [
+        "Documentation lab"
+      ],
+      "hostname": "app-gateway.example",
+      "cells": [
+        {
+          "report_id": 1,
+          "state": "unknown",
+          "service": null,
+          "version": null
+        },
+        {
+          "report_id": 2,
+          "state": "found",
+          "service": "ssh",
+          "version": null
+        },
+        {
+          "report_id": 3,
+          "state": "unknown",
+          "service": null,
+          "version": null
+        }
+      ]
+    },
+    {
+      "device_id": "[1, \"192.0.2.40\"]",
+      "ip": "192.0.2.40",
+      "protocol": "host",
+      "port": 0,
+      "network": "Documentation lab",
+      "network_part_id": 1,
+      "parts": [
+        "Documentation lab"
+      ],
+      "hostname": "portal.example",
+      "cells": [
+        {
+          "report_id": 1,
+          "state": "found",
+          "service": null,
+          "version": null
+        },
+        {
+          "report_id": 2,
+          "state": "found",
+          "service": null,
+          "version": null
+        },
+        {
+          "report_id": 3,
+          "state": "unknown",
+          "service": null,
+          "version": null
+        }
+      ]
+    },
+    {
+      "device_id": "[1, \"192.0.2.40\"]",
+      "ip": "192.0.2.40",
+      "protocol": "tcp",
+      "port": 443,
+      "network": "Documentation lab",
+      "network_part_id": 1,
+      "parts": [
+        "Documentation lab"
+      ],
+      "hostname": "portal.example",
+      "cells": [
+        {
+          "report_id": 1,
+          "state": "found",
+          "service": "https",
+          "version": null
+        },
+        {
+          "report_id": 2,
+          "state": "found",
+          "service": "https",
+          "version": null
+        },
+        {
+          "report_id": 3,
+          "state": "unknown",
+          "service": null,
+          "version": null
+        }
+      ]
+    },
+    {
+      "device_id": "[1, \"192.0.2.50\"]",
+      "ip": "192.0.2.50",
+      "protocol": "host",
+      "port": 0,
+      "network": "Documentation lab",
+      "network_part_id": 1,
+      "parts": [
+        "Documentation lab"
+      ],
+      "hostname": "files.example",
+      "cells": [
+        {
+          "report_id": 1,
+          "state": "unknown",
+          "service": null,
+          "version": null
+        },
+        {
+          "report_id": 2,
+          "state": "found",
+          "service": null,
+          "version": null
+        },
+        {
+          "report_id": 3,
+          "state": "unknown",
+          "service": null,
+          "version": null
+        }
+      ]
+    },
+    {
+      "device_id": "[1, \"192.0.2.50\"]",
+      "ip": "192.0.2.50",
+      "protocol": "tcp",
+      "port": 445,
+      "network": "Documentation lab",
+      "network_part_id": 1,
+      "parts": [
+        "Documentation lab"
+      ],
+      "hostname": "files.example",
+      "cells": [
+        {
+          "report_id": 1,
+          "state": "unknown",
+          "service": null,
+          "version": null
+        },
+        {
+          "report_id": 2,
+          "state": "found",
+          "service": "microsoft-ds",
+          "version": null
+        },
+        {
+          "report_id": 3,
+          "state": "unknown",
+          "service": null,
+          "version": null
+        }
+      ]
+    },
+    {
+      "device_id": "[1, \"192.0.2.60\"]",
+      "ip": "192.0.2.60",
+      "protocol": "host",
+      "port": 0,
+      "network": "Documentation lab",
+      "network_part_id": 1,
+      "parts": [
+        "Documentation lab"
+      ],
+      "hostname": "database.example",
+      "cells": [
+        {
+          "report_id": 1,
+          "state": "unknown",
+          "service": null,
+          "version": null
+        },
+        {
+          "report_id": 2,
+          "state": "unknown",
+          "service": null,
+          "version": null
+        },
+        {
+          "report_id": 3,
+          "state": "found",
+          "service": null,
+          "version": null
+        }
+      ]
+    },
+    {
+      "device_id": "[1, \"192.0.2.60\"]",
+      "ip": "192.0.2.60",
+      "protocol": "tcp",
+      "port": 5432,
+      "network": "Documentation lab",
+      "network_part_id": 1,
+      "parts": [
+        "Documentation lab"
+      ],
+      "hostname": "database.example",
+      "cells": [
+        {
+          "report_id": 1,
+          "state": "unknown",
+          "service": null,
+          "version": null
+        },
+        {
+          "report_id": 2,
+          "state": "unknown",
+          "service": null,
+          "version": null
+        },
+        {
+          "report_id": 3,
+          "state": "found",
+          "service": "postgresql",
+          "version": null
+        }
+      ]
+    },
+    {
+      "device_id": "[1, \"192.0.2.70\"]",
+      "ip": "192.0.2.70",
+      "protocol": "host",
+      "port": 0,
+      "network": "Documentation lab",
+      "network_part_id": 1,
+      "parts": [
+        "Documentation lab"
+      ],
+      "hostname": "monitoring.example",
+      "cells": [
+        {
+          "report_id": 1,
+          "state": "unknown",
+          "service": null,
+          "version": null
+        },
+        {
+          "report_id": 2,
+          "state": "unknown",
+          "service": null,
+          "version": null
+        },
+        {
+          "report_id": 3,
+          "state": "found",
+          "service": null,
+          "version": null
+        }
+      ]
+    },
+    {
+      "device_id": "[1, \"192.0.2.70\"]",
+      "ip": "192.0.2.70",
+      "protocol": "tcp",
+      "port": 9090,
+      "network": "Documentation lab",
+      "network_part_id": 1,
+      "parts": [
+        "Documentation lab"
+      ],
+      "hostname": "monitoring.example",
+      "cells": [
+        {
+          "report_id": 1,
+          "state": "unknown",
+          "service": null,
+          "version": null
+        },
+        {
+          "report_id": 2,
+          "state": "unknown",
+          "service": null,
+          "version": null
+        },
+        {
+          "report_id": 3,
+          "state": "found",
+          "service": "http",
+          "version": null
+        }
+      ]
+    }
+  ],
+  "warnings": [
+    "Связи показывают обнаруженные сервисы, а не физические соединения или маршруты. Отсутствие записи без подтверждённой области проверки — «Нет данных»."
+  ],
+  "whole_project": false,
+  "merge_parts": false
+}

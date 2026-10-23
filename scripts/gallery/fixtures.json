@@ -1,0 +1,1490 @@
+{
+  "project_id": 9001,
+  "part_id": 9101,
+  "catalog": [
+    {
+      "id": 9001,
+      "name": "Documentation lab",
+      "parts": [
+        {
+          "id": 9101,
+          "name": "Server segment",
+          "report_count": 5
+        }
+      ]
+    }
+  ],
+  "scans": [
+    {
+      "id": 101,
+      "dns_options": null,
+      "dns_status": "not_requested",
+      "dns_summary": null,
+      "dns_job_id": null,
+      "retry_of_id": null,
+      "target": "demo-source-1.json",
+      "scan_type": "import-webscanner",
+      "ports": null,
+      "comment": "Synthetic report created for project documentation; not a live scan.",
+      "project_id": 9001,
+      "network_part_id": 9101,
+      "project": "Documentation lab",
+      "network": "Server segment",
+      "source_host": "192.0.2.10 Analyst",
+      "author": "Demo dataset",
+      "observed_at": "2026-10-23T09:30:00",
+      "scope_targets": null,
+      "scope_ports": null,
+      "scope_confirmed": false,
+      "exclude_ips": null,
+      "exclude_hosts": null,
+      "exclude_ports": null,
+      "speed": "normal",
+      "status": "completed",
+      "progress": 100,
+      "stage": "imported",
+      "total_hosts": 3,
+      "total_ports": 2,
+      "total_services": 2,
+      "total_web": 0,
+      "total_screenshots": 0,
+      "error_message": null,
+      "created_at": "2026-10-23T09:30:00",
+      "started_at": "2026-10-23T09:30:00",
+      "finished_at": "2026-10-23T09:30:00",
+      "duration_seconds": 74,
+      "screenshots": [],
+      "hosts": [
+        {
+          "dns_result": null,
+          "id": 101,
+          "scan_id": 1,
+          "ip": "192.0.2.10",
+          "hostname": "analyst.example",
+          "os": null,
+          "created_at": "2026-10-23T14:23:46",
+          "ports": []
+        },
+        {
+          "dns_result": null,
+          "id": 102,
+          "scan_id": 1,
+          "ip": "192.0.2.20",
+          "hostname": "jump.example",
+          "os": null,
+          "created_at": "2026-10-23T14:23:46",
+          "ports": [
+            {
+              "id": 1,
+              "host_id": 2,
+              "port": 22,
+              "protocol": "tcp",
+              "state": "open",
+              "service": "ssh",
+              "version": null,
+              "banner": null,
+              "created_at": "2026-10-23T14:23:46",
+              "service_obj": null
+            }
+          ]
+        },
+        {
+          "dns_result": null,
+          "id": 103,
+          "scan_id": 1,
+          "ip": "192.0.2.40",
+          "hostname": "portal.example",
+          "os": null,
+          "created_at": "2026-10-23T14:23:46",
+          "ports": [
+            {
+              "id": 2,
+              "host_id": 3,
+              "port": 443,
+              "protocol": "tcp",
+              "state": "open",
+              "service": "https",
+              "version": null,
+              "banner": null,
+              "created_at": "2026-10-23T14:23:46",
+              "service_obj": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 102,
+      "dns_options": null,
+      "dns_status": "not_requested",
+      "dns_summary": null,
+      "dns_job_id": null,
+      "retry_of_id": null,
+      "target": "demo-source-2.json",
+      "scan_type": "import-webscanner",
+      "ports": null,
+      "comment": "Synthetic report created for project documentation; not a live scan.",
+      "project_id": 9001,
+      "network_part_id": 9101,
+      "project": "Documentation lab",
+      "network": "Server segment",
+      "source_host": "192.0.2.20 Jump host",
+      "author": "Demo dataset",
+      "observed_at": "2026-10-23T09:40:00",
+      "scope_targets": null,
+      "scope_ports": null,
+      "scope_confirmed": false,
+      "exclude_ips": null,
+      "exclude_hosts": null,
+      "exclude_ports": null,
+      "speed": "normal",
+      "status": "completed",
+      "progress": 100,
+      "stage": "imported",
+      "total_hosts": 3,
+      "total_ports": 3,
+      "total_services": 3,
+      "total_web": 0,
+      "total_screenshots": 0,
+      "error_message": null,
+      "created_at": "2026-10-23T09:40:00",
+      "started_at": "2026-10-23T09:40:00",
+      "finished_at": "2026-10-23T09:40:00",
+      "duration_seconds": 74,
+      "screenshots": [],
+      "hosts": [
+        {
+          "dns_result": null,
+          "id": 104,
+          "scan_id": 2,
+          "ip": "192.0.2.30",
+          "hostname": "app-gateway.example",
+          "os": null,
+          "created_at": "2026-10-23T14:23:46",
+          "ports": [
+            {
+              "id": 3,
+              "host_id": 4,
+              "port": 22,
+              "protocol": "tcp",
+              "state": "open",
+              "service": "ssh",
+              "version": null,
+              "banner": null,
+              "created_at": "2026-10-23T14:23:46",
+              "service_obj": null
+            }
+          ]
+        },
+        {
+          "dns_result": null,
+          "id": 105,
+          "scan_id": 2,
+          "ip": "192.0.2.40",
+          "hostname": "portal.example",
+          "os": null,
+          "created_at": "2026-10-23T14:23:46",
+          "ports": [
+            {
+              "id": 4,
+              "host_id": 5,
+              "port": 443,
+              "protocol": "tcp",
+              "state": "open",
+              "service": "https",
+              "version": null,
+              "banner": null,
+              "created_at": "2026-10-23T14:23:46",
+              "service_obj": null
+            }
+          ]
+        },
+        {
+          "dns_result": null,
+          "id": 106,
+          "scan_id": 2,
+          "ip": "192.0.2.50",
+          "hostname": "files.example",
+          "os": null,
+          "created_at": "2026-10-23T14:23:46",
+          "ports": [
+            {
+              "id": 5,
+              "host_id": 6,
+              "port": 445,
+              "protocol": "tcp",
+              "state": "open",
+              "service": "microsoft-ds",
+              "version": null,
+              "banner": null,
+              "created_at": "2026-10-23T14:23:46",
+              "service_obj": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 103,
+      "dns_options": null,
+      "dns_status": "not_requested",
+      "dns_summary": null,
+      "dns_job_id": null,
+      "retry_of_id": null,
+      "target": "demo-source-3.json",
+      "scan_type": "import-webscanner",
+      "ports": null,
+      "comment": "Synthetic report created for project documentation; not a live scan.",
+      "project_id": 9001,
+      "network_part_id": 9101,
+      "project": "Documentation lab",
+      "network": "Server segment",
+      "source_host": "192.0.2.30 App gateway",
+      "author": "Demo dataset",
+      "observed_at": "2026-10-23T09:50:00",
+      "scope_targets": null,
+      "scope_ports": null,
+      "scope_confirmed": false,
+      "exclude_ips": null,
+      "exclude_hosts": null,
+      "exclude_ports": null,
+      "speed": "normal",
+      "status": "completed",
+      "progress": 100,
+      "stage": "imported",
+      "total_hosts": 2,
+      "total_ports": 2,
+      "total_services": 2,
+      "total_web": 0,
+      "total_screenshots": 0,
+      "error_message": null,
+      "created_at": "2026-10-23T09:50:00",
+      "started_at": "2026-10-23T09:50:00",
+      "finished_at": "2026-10-23T09:50:00",
+      "duration_seconds": 74,
+      "screenshots": [],
+      "hosts": [
+        {
+          "dns_result": null,
+          "id": 107,
+          "scan_id": 3,
+          "ip": "192.0.2.60",
+          "hostname": "database.example",
+          "os": null,
+          "created_at": "2026-10-23T14:23:46",
+          "ports": [
+            {
+              "id": 6,
+              "host_id": 7,
+              "port": 5432,
+              "protocol": "tcp",
+              "state": "open",
+              "service": "postgresql",
+              "version": null,
+              "banner": null,
+              "created_at": "2026-10-23T14:23:46",
+              "service_obj": null
+            }
+          ]
+        },
+        {
+          "dns_result": null,
+          "id": 108,
+          "scan_id": 3,
+          "ip": "192.0.2.70",
+          "hostname": "monitoring.example",
+          "os": null,
+          "created_at": "2026-10-23T14:23:46",
+          "ports": [
+            {
+              "id": 7,
+              "host_id": 8,
+              "port": 9090,
+              "protocol": "tcp",
+              "state": "open",
+              "service": "http",
+              "version": null,
+              "banner": null,
+              "created_at": "2026-10-23T14:23:46",
+              "service_obj": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 201,
+      "dns_options": {
+        "enabled": true,
+        "server": "192.0.2.53",
+        "transport": "tcp"
+      },
+      "dns_status": "completed",
+      "dns_summary": {
+        "counts": {
+          "resolved": 5
+        },
+        "servers": [
+          {
+            "server": "192.0.2.53",
+            "source": "manual",
+            "resolved": 5,
+            "answered": 5,
+            "statuses": [
+              "resolved"
+            ]
+          }
+        ]
+      },
+      "dns_job_id": null,
+      "retry_of_id": null,
+      "target": "192.0.2.0/24",
+      "scan_type": "quick",
+      "ports": null,
+      "comment": "Synthetic documentation fixture: compare the baseline and follow-up reports. No network was scanned.",
+      "project_id": 9001,
+      "network_part_id": 9101,
+      "project": "Documentation lab",
+      "network": "Server segment",
+      "source_host": "192.0.2.20 Jump host",
+      "author": "Demo dataset",
+      "observed_at": "2026-10-23T09:30:00Z",
+      "scope_targets": null,
+      "scope_ports": null,
+      "scope_confirmed": false,
+      "exclude_ips": null,
+      "exclude_hosts": null,
+      "exclude_ports": null,
+      "speed": "normal",
+      "status": "completed",
+      "progress": 100,
+      "stage": "completed",
+      "total_hosts": 5,
+      "total_ports": 5,
+      "total_services": 5,
+      "total_web": 3,
+      "total_screenshots": 3,
+      "error_message": null,
+      "created_at": "2026-10-23T09:30:00Z",
+      "started_at": "2026-10-23T09:30:00Z",
+      "finished_at": "2026-10-23T09:30:00Z",
+      "duration_seconds": 74,
+      "screenshots": [
+        {
+          "id": 1001,
+          "scan_id": 201,
+          "url": "https://portal.example:443",
+          "minio_path": "local://scan_201/service-0.png",
+          "status_code": 200,
+          "title": "Documentation portal",
+          "technologies": "[\"HTML5\"]"
+        },
+        {
+          "id": 1002,
+          "scan_id": 201,
+          "url": "http://monitoring.example:9090",
+          "minio_path": "local://scan_201/service-1.png",
+          "status_code": 200,
+          "title": "Service monitoring",
+          "technologies": "[\"HTML5\"]"
+        },
+        {
+          "id": 1003,
+          "scan_id": 201,
+          "url": "https://gateway.example:8443",
+          "minio_path": "local://scan_201/service-2.png",
+          "status_code": 200,
+          "title": "Access gateway",
+          "technologies": "[\"HTML5\"]"
+        }
+      ],
+      "hosts": [
+        {
+          "id": 1020,
+          "scan_id": 201,
+          "ip": "192.0.2.20",
+          "hostname": "jump.example",
+          "os": "Linux (demo)",
+          "dns_result": {
+            "status": "resolved",
+            "names": [
+              "jump.example"
+            ],
+            "server": "192.0.2.53",
+            "transport": "tcp",
+            "method": "PTR",
+            "checked_at": "2026-10-23T09:32:00Z"
+          },
+          "ports": [
+            {
+              "id": 2000,
+              "port": 22,
+              "protocol": "tcp",
+              "state": "open",
+              "service": "ssh",
+              "version": "OpenSSH 9.6",
+              "banner": "ssh / synthetic documentation fixture",
+              "service_obj": null
+            }
+          ]
+        },
+        {
+          "id": 1040,
+          "scan_id": 201,
+          "ip": "192.0.2.40",
+          "hostname": "portal.example",
+          "os": "Linux (demo)",
+          "dns_result": {
+            "status": "resolved",
+            "names": [
+              "portal.example"
+            ],
+            "server": "192.0.2.53",
+            "transport": "tcp",
+            "method": "PTR",
+            "checked_at": "2026-10-23T09:32:00Z"
+          },
+          "ports": [
+            {
+              "id": 4000,
+              "port": 443,
+              "protocol": "tcp",
+              "state": "open",
+              "service": "https",
+              "version": "nginx 1.24",
+              "banner": "https / synthetic documentation fixture",
+              "service_obj": {
+                "id": 4000,
+                "url": "https://portal.example:443",
+                "status_code": 200,
+                "title": "Portal — Demo service",
+                "technologies": "[\"nginx\", \"HTML5\"]",
+                "ssl": true
+              }
+            }
+          ]
+        },
+        {
+          "id": 1050,
+          "scan_id": 201,
+          "ip": "192.0.2.50",
+          "hostname": "files.example",
+          "os": "Linux (demo)",
+          "dns_result": {
+            "status": "resolved",
+            "names": [
+              "files.example"
+            ],
+            "server": "192.0.2.53",
+            "transport": "tcp",
+            "method": "PTR",
+            "checked_at": "2026-10-23T09:32:00Z"
+          },
+          "ports": [
+            {
+              "id": 5000,
+              "port": 445,
+              "protocol": "tcp",
+              "state": "open",
+              "service": "microsoft-ds",
+              "version": "Samba 4.19",
+              "banner": "microsoft-ds / synthetic documentation fixture",
+              "service_obj": null
+            }
+          ]
+        },
+        {
+          "id": 1070,
+          "scan_id": 201,
+          "ip": "192.0.2.70",
+          "hostname": "monitoring.example",
+          "os": "Linux (demo)",
+          "dns_result": {
+            "status": "resolved",
+            "names": [
+              "monitoring.example"
+            ],
+            "server": "192.0.2.53",
+            "transport": "tcp",
+            "method": "PTR",
+            "checked_at": "2026-10-23T09:32:00Z"
+          },
+          "ports": [
+            {
+              "id": 7000,
+              "port": 9090,
+              "protocol": "tcp",
+              "state": "open",
+              "service": "http",
+              "version": "Prometheus (demo)",
+              "banner": "http / synthetic documentation fixture",
+              "service_obj": {
+                "id": 7000,
+                "url": "http://monitoring.example:9090",
+                "status_code": 200,
+                "title": "Monitoring — Demo service",
+                "technologies": "[\"nginx\", \"HTML5\"]",
+                "ssl": false
+              }
+            }
+          ]
+        },
+        {
+          "id": 1080,
+          "scan_id": 201,
+          "ip": "192.0.2.80",
+          "hostname": "gateway.example",
+          "os": "Linux (demo)",
+          "dns_result": {
+            "status": "resolved",
+            "names": [
+              "gateway.example"
+            ],
+            "server": "192.0.2.53",
+            "transport": "tcp",
+            "method": "PTR",
+            "checked_at": "2026-10-23T09:32:00Z"
+          },
+          "ports": [
+            {
+              "id": 8000,
+              "port": 8443,
+              "protocol": "tcp",
+              "state": "open",
+              "service": "https",
+              "version": "nginx 1.24",
+              "banner": "https / synthetic documentation fixture",
+              "service_obj": {
+                "id": 8000,
+                "url": "https://gateway.example:8443",
+                "status_code": 200,
+                "title": "Gateway — Demo service",
+                "technologies": "[\"nginx\", \"HTML5\"]",
+                "ssl": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 202,
+      "dns_options": {
+        "enabled": true,
+        "server": "192.0.2.53",
+        "transport": "tcp"
+      },
+      "dns_status": "completed",
+      "dns_summary": {
+        "counts": {
+          "resolved": 5
+        },
+        "servers": [
+          {
+            "server": "192.0.2.53",
+            "source": "manual",
+            "resolved": 5,
+            "answered": 5,
+            "statuses": [
+              "resolved"
+            ]
+          }
+        ]
+      },
+      "dns_job_id": null,
+      "retry_of_id": null,
+      "target": "192.0.2.0/24",
+      "scan_type": "quick",
+      "ports": null,
+      "comment": "Synthetic documentation fixture: compare the baseline and follow-up reports. No network was scanned.",
+      "project_id": 9001,
+      "network_part_id": 9101,
+      "project": "Documentation lab",
+      "network": "Server segment",
+      "source_host": "192.0.2.20 Jump host",
+      "author": "Demo dataset",
+      "observed_at": "2026-10-23T10:30:00Z",
+      "scope_targets": null,
+      "scope_ports": null,
+      "scope_confirmed": false,
+      "exclude_ips": null,
+      "exclude_hosts": null,
+      "exclude_ports": null,
+      "speed": "normal",
+      "status": "completed",
+      "progress": 100,
+      "stage": "completed",
+      "total_hosts": 5,
+      "total_ports": 5,
+      "total_services": 5,
+      "total_web": 3,
+      "total_screenshots": 3,
+      "error_message": null,
+      "created_at": "2026-10-23T10:30:00Z",
+      "started_at": "2026-10-23T10:30:00Z",
+      "finished_at": "2026-10-23T10:30:00Z",
+      "duration_seconds": 74,
+      "screenshots": [
+        {
+          "id": 1001,
+          "scan_id": 201,
+          "url": "https://portal.example:443",
+          "minio_path": "local://scan_201/service-0.png",
+          "status_code": 200,
+          "title": "Documentation portal",
+          "technologies": "[\"HTML5\"]"
+        },
+        {
+          "id": 1002,
+          "scan_id": 201,
+          "url": "http://monitoring.example:9090",
+          "minio_path": "local://scan_201/service-1.png",
+          "status_code": 200,
+          "title": "Service monitoring",
+          "technologies": "[\"HTML5\"]"
+        },
+        {
+          "id": 1003,
+          "scan_id": 201,
+          "url": "https://gateway.example:8443",
+          "minio_path": "local://scan_201/service-2.png",
+          "status_code": 200,
+          "title": "Access gateway",
+          "technologies": "[\"HTML5\"]"
+        }
+      ],
+      "hosts": [
+        {
+          "id": 1020,
+          "scan_id": 201,
+          "ip": "192.0.2.20",
+          "hostname": "jump.example",
+          "os": "Linux (demo)",
+          "dns_result": {
+            "status": "resolved",
+            "names": [
+              "jump.example"
+            ],
+            "server": "192.0.2.53",
+            "transport": "tcp",
+            "method": "PTR",
+            "checked_at": "2026-10-23T09:32:00Z"
+          },
+          "ports": [
+            {
+              "id": 2000,
+              "port": 22,
+              "protocol": "tcp",
+              "state": "open",
+              "service": "ssh",
+              "version": "OpenSSH 9.6",
+              "banner": "ssh / synthetic documentation fixture",
+              "service_obj": null
+            }
+          ]
+        },
+        {
+          "id": 1040,
+          "scan_id": 201,
+          "ip": "192.0.2.40",
+          "hostname": "portal.example",
+          "os": "Linux (demo)",
+          "dns_result": {
+            "status": "resolved",
+            "names": [
+              "portal.example"
+            ],
+            "server": "192.0.2.53",
+            "transport": "tcp",
+            "method": "PTR",
+            "checked_at": "2026-10-23T09:32:00Z"
+          },
+          "ports": [
+            {
+              "id": 4000,
+              "port": 443,
+              "protocol": "tcp",
+              "state": "open",
+              "service": "https",
+              "version": "nginx 1.26",
+              "banner": "https / synthetic documentation fixture",
+              "service_obj": {
+                "id": 4000,
+                "url": "https://portal.example:443",
+                "status_code": 200,
+                "title": "Portal — Updated demo service",
+                "technologies": "[\"nginx\", \"HTML5\"]",
+                "ssl": true
+              }
+            }
+          ]
+        },
+        {
+          "id": 1070,
+          "scan_id": 201,
+          "ip": "192.0.2.70",
+          "hostname": "monitoring.example",
+          "os": "Linux (demo)",
+          "dns_result": {
+            "status": "resolved",
+            "names": [
+              "monitoring.example"
+            ],
+            "server": "192.0.2.53",
+            "transport": "tcp",
+            "method": "PTR",
+            "checked_at": "2026-10-23T09:32:00Z"
+          },
+          "ports": [
+            {
+              "id": 7000,
+              "port": 9090,
+              "protocol": "tcp",
+              "state": "open",
+              "service": "http",
+              "version": "Prometheus (demo)",
+              "banner": "http / synthetic documentation fixture",
+              "service_obj": {
+                "id": 7000,
+                "url": "http://monitoring.example:9090",
+                "status_code": 200,
+                "title": "Monitoring — Demo service",
+                "technologies": "[\"nginx\", \"HTML5\"]",
+                "ssl": false
+              }
+            }
+          ]
+        },
+        {
+          "id": 1080,
+          "scan_id": 201,
+          "ip": "192.0.2.80",
+          "hostname": "gateway.example",
+          "os": "Linux (demo)",
+          "dns_result": {
+            "status": "resolved",
+            "names": [
+              "gateway.example"
+            ],
+            "server": "192.0.2.53",
+            "transport": "tcp",
+            "method": "PTR",
+            "checked_at": "2026-10-23T09:32:00Z"
+          },
+          "ports": [
+            {
+              "id": 8000,
+              "port": 8443,
+              "protocol": "tcp",
+              "state": "open",
+              "service": "https",
+              "version": "nginx 1.24",
+              "banner": "https / synthetic documentation fixture",
+              "service_obj": {
+                "id": 8000,
+                "url": "https://gateway.example:8443",
+                "status_code": 200,
+                "title": "Gateway — Demo service",
+                "technologies": "[\"nginx\", \"HTML5\"]",
+                "ssl": true
+              }
+            }
+          ]
+        },
+        {
+          "id": 1090,
+          "scan_id": 201,
+          "ip": "192.0.2.90",
+          "hostname": "new-node.example",
+          "os": "Linux (demo)",
+          "dns_result": {
+            "status": "resolved",
+            "names": [
+              "new-node.example"
+            ],
+            "server": "192.0.2.53",
+            "transport": "tcp",
+            "method": "PTR",
+            "checked_at": "2026-10-23T09:32:00Z"
+          },
+          "ports": [
+            {
+              "id": 9000,
+              "port": 22,
+              "protocol": "tcp",
+              "state": "open",
+              "service": "ssh",
+              "version": "OpenSSH 9.7",
+              "banner": "ssh / synthetic documentation fixture",
+              "service_obj": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "visibility": {
+    "columns": [
+      {
+        "id": 101,
+        "target": "demo-source-1.json",
+        "source_host": "192.0.2.10 Analyst",
+        "author": "Demo dataset",
+        "observed_at": "2026-10-23T09:30:00",
+        "created_at": "2026-10-23T09:30:00",
+        "scope_confirmed": false,
+        "scope_targets": null,
+        "scope_ports": null,
+        "network": "Server segment",
+        "network_part_id": 9101
+      },
+      {
+        "id": 102,
+        "target": "demo-source-2.json",
+        "source_host": "192.0.2.20 Jump host",
+        "author": "Demo dataset",
+        "observed_at": "2026-10-23T09:40:00",
+        "created_at": "2026-10-23T09:40:00",
+        "scope_confirmed": false,
+        "scope_targets": null,
+        "scope_ports": null,
+        "network": "Server segment",
+        "network_part_id": 9101
+      },
+      {
+        "id": 103,
+        "target": "demo-source-3.json",
+        "source_host": "192.0.2.30 App gateway",
+        "author": "Demo dataset",
+        "observed_at": "2026-10-23T09:50:00",
+        "created_at": "2026-10-23T09:50:00",
+        "scope_confirmed": false,
+        "scope_targets": null,
+        "scope_ports": null,
+        "network": "Server segment",
+        "network_part_id": 9101
+      }
+    ],
+    "rows": [
+      {
+        "device_id": "[9101, \"192.0.2.10\"]",
+        "ip": "192.0.2.10",
+        "protocol": "host",
+        "port": 0,
+        "network": "Server segment",
+        "network_part_id": 9101,
+        "parts": [
+          "Server segment"
+        ],
+        "hostname": "analyst.example",
+        "cells": [
+          {
+            "report_id": 101,
+            "state": "found",
+            "service": null,
+            "version": null
+          },
+          {
+            "report_id": 102,
+            "state": "unknown",
+            "service": null,
+            "version": null
+          },
+          {
+            "report_id": 103,
+            "state": "unknown",
+            "service": null,
+            "version": null
+          }
+        ]
+      },
+      {
+        "device_id": "[9101, \"192.0.2.20\"]",
+        "ip": "192.0.2.20",
+        "protocol": "host",
+        "port": 0,
+        "network": "Server segment",
+        "network_part_id": 9101,
+        "parts": [
+          "Server segment"
+        ],
+        "hostname": "jump.example",
+        "cells": [
+          {
+            "report_id": 101,
+            "state": "found",
+            "service": null,
+            "version": null
+          },
+          {
+            "report_id": 102,
+            "state": "unknown",
+            "service": null,
+            "version": null
+          },
+          {
+            "report_id": 103,
+            "state": "unknown",
+            "service": null,
+            "version": null
+          }
+        ]
+      },
+      {
+        "device_id": "[9101, \"192.0.2.20\"]",
+        "ip": "192.0.2.20",
+        "protocol": "tcp",
+        "port": 22,
+        "network": "Server segment",
+        "network_part_id": 9101,
+        "parts": [
+          "Server segment"
+        ],
+        "hostname": "jump.example",
+        "cells": [
+          {
+            "report_id": 101,
+            "state": "found",
+            "service": "ssh",
+            "version": null
+          },
+          {
+            "report_id": 102,
+            "state": "unknown",
+            "service": null,
+            "version": null
+          },
+          {
+            "report_id": 103,
+            "state": "unknown",
+            "service": null,
+            "version": null
+          }
+        ]
+      },
+      {
+        "device_id": "[9101, \"192.0.2.30\"]",
+        "ip": "192.0.2.30",
+        "protocol": "host",
+        "port": 0,
+        "network": "Server segment",
+        "network_part_id": 9101,
+        "parts": [
+          "Server segment"
+        ],
+        "hostname": "app-gateway.example",
+        "cells": [
+          {
+            "report_id": 101,
+            "state": "unknown",
+            "service": null,
+            "version": null
+          },
+          {
+            "report_id": 102,
+            "state": "found",
+            "service": null,
+            "version": null
+          },
+          {
+            "report_id": 103,
+            "state": "unknown",
+            "service": null,
+            "version": null
+          }
+        ]
+      },
+      {
+        "device_id": "[9101, \"192.0.2.30\"]",
+        "ip": "192.0.2.30",
+        "protocol": "tcp",
+        "port": 22,
+        "network": "Server segment",
+        "network_part_id": 9101,
+        "parts": [
+          "Server segment"
+        ],
+        "hostname": "app-gateway.example",
+        "cells": [
+          {
+            "report_id": 101,
+            "state": "unknown",
+            "service": null,
+            "version": null
+          },
+          {
+            "report_id": 102,
+            "state": "found",
+            "service": "ssh",
+            "version": null
+          },
+          {
+            "report_id": 103,
+            "state": "unknown",
+            "service": null,
+            "version": null
+          }
+        ]
+      },
+      {
+        "device_id": "[9101, \"192.0.2.40\"]",
+        "ip": "192.0.2.40",
+        "protocol": "host",
+        "port": 0,
+        "network": "Server segment",
+        "network_part_id": 9101,
+        "parts": [
+          "Server segment"
+        ],
+        "hostname": "portal.example",
+        "cells": [
+          {
+            "report_id": 101,
+            "state": "found",
+            "service": null,
+            "version": null
+          },
+          {
+            "report_id": 102,
+            "state": "found",
+            "service": null,
+            "version": null
+          },
+          {
+            "report_id": 103,
+            "state": "unknown",
+            "service": null,
+            "version": null
+          }
+        ]
+      },
+      {
+        "device_id": "[9101, \"192.0.2.40\"]",
+        "ip": "192.0.2.40",
+        "protocol": "tcp",
+        "port": 443,
+        "network": "Server segment",
+        "network_part_id": 9101,
+        "parts": [
+          "Server segment"
+        ],
+        "hostname": "portal.example",
+        "cells": [
+          {
+            "report_id": 101,
+            "state": "found",
+            "service": "https",
+            "version": null
+          },
+          {
+            "report_id": 102,
+            "state": "found",
+            "service": "https",
+            "version": null
+          },
+          {
+            "report_id": 103,
+            "state": "unknown",
+            "service": null,
+            "version": null
+          }
+        ]
+      },
+      {
+        "device_id": "[9101, \"192.0.2.50\"]",
+        "ip": "192.0.2.50",
+        "protocol": "host",
+        "port": 0,
+        "network": "Server segment",
+        "network_part_id": 9101,
+        "parts": [
+          "Server segment"
+        ],
+        "hostname": "files.example",
+        "cells": [
+          {
+            "report_id": 101,
+            "state": "unknown",
+            "service": null,
+            "version": null
+          },
+          {
+            "report_id": 102,
+            "state": "found",
+            "service": null,
+            "version": null
+          },
+          {
+            "report_id": 103,
+            "state": "unknown",
+            "service": null,
+            "version": null
+          }
+        ]
+      },
+      {
+        "device_id": "[9101, \"192.0.2.50\"]",
+        "ip": "192.0.2.50",
+        "protocol": "tcp",
+        "port": 445,
+        "network": "Server segment",
+        "network_part_id": 9101,
+        "parts": [
+          "Server segment"
+        ],
+        "hostname": "files.example",
+        "cells": [
+          {
+            "report_id": 101,
+            "state": "unknown",
+            "service": null,
+            "version": null
+          },
+          {
+            "report_id": 102,
+            "state": "found",
+            "service": "microsoft-ds",
+            "version": null
+          },
+          {
+            "report_id": 103,
+            "state": "unknown",
+            "service": null,
+            "version": null
+          }
+        ]
+      },
+      {
+        "device_id": "[9101, \"192.0.2.60\"]",
+        "ip": "192.0.2.60",
+        "protocol": "host",
+        "port": 0,
+        "network": "Server segment",
+        "network_part_id": 9101,
+        "parts": [
+          "Server segment"
+        ],
+        "hostname": "database.example",
+        "cells": [
+          {
+            "report_id": 101,
+            "state": "unknown",
+            "service": null,
+            "version": null
+          },
+          {
+            "report_id": 102,
+            "state": "unknown",
+            "service": null,
+            "version": null
+          },
+          {
+            "report_id": 103,
+            "state": "found",
+            "service": null,
+            "version": null
+          }
+        ]
+      },
+      {
+        "device_id": "[9101, \"192.0.2.60\"]",
+        "ip": "192.0.2.60",
+        "protocol": "tcp",
+        "port": 5432,
+        "network": "Server segment",
+        "network_part_id": 9101,
+        "parts": [
+          "Server segment"
+        ],
+        "hostname": "database.example",
+        "cells": [
+          {
+            "report_id": 101,
+            "state": "unknown",
+            "service": null,
+            "version": null
+          },
+          {
+            "report_id": 102,
+            "state": "unknown",
+            "service": null,
+            "version": null
+          },
+          {
+            "report_id": 103,
+            "state": "found",
+            "service": "postgresql",
+            "version": null
+          }
+        ]
+      },
+      {
+        "device_id": "[9101, \"192.0.2.70\"]",
+        "ip": "192.0.2.70",
+        "protocol": "host",
+        "port": 0,
+        "network": "Server segment",
+        "network_part_id": 9101,
+        "parts": [
+          "Server segment"
+        ],
+        "hostname": "monitoring.example",
+        "cells": [
+          {
+            "report_id": 101,
+            "state": "unknown",
+            "service": null,
+            "version": null
+          },
+          {
+            "report_id": 102,
+            "state": "unknown",
+            "service": null,
+            "version": null
+          },
+          {
+            "report_id": 103,
+            "state": "found",
+            "service": null,
+            "version": null
+          }
+        ]
+      },
+      {
+        "device_id": "[9101, \"192.0.2.70\"]",
+        "ip": "192.0.2.70",
+        "protocol": "tcp",
+        "port": 9090,
+        "network": "Server segment",
+        "network_part_id": 9101,
+        "parts": [
+          "Server segment"
+        ],
+        "hostname": "monitoring.example",
+        "cells": [
+          {
+            "report_id": 101,
+            "state": "unknown",
+            "service": null,
+            "version": null
+          },
+          {
+            "report_id": 102,
+            "state": "unknown",
+            "service": null,
+            "version": null
+          },
+          {
+            "report_id": 103,
+            "state": "found",
+            "service": "http",
+            "version": null
+          }
+        ]
+      }
+    ],
+    "warnings": [
+      "Связи показывают обнаруженные сервисы, а не физические соединения или маршруты. Отсутствие записи без подтверждённой области проверки — «Нет данных»."
+    ],
+    "whole_project": false,
+    "merge_parts": false
+  },
+  "comparison": {
+    "added_hosts": [
+      {
+        "id": 1090,
+        "scan_id": 201,
+        "ip": "192.0.2.90",
+        "hostname": "new-node.example",
+        "os": "Linux (demo)",
+        "dns_result": {
+          "status": "resolved",
+          "names": [
+            "new-node.example"
+          ],
+          "server": "192.0.2.53",
+          "transport": "tcp",
+          "method": "PTR",
+          "checked_at": "2026-10-23T09:32:00Z"
+        },
+        "ports": [
+          {
+            "id": 9000,
+            "port": 22,
+            "protocol": "tcp",
+            "state": "open",
+            "service": "ssh",
+            "version": "OpenSSH 9.7",
+            "banner": "ssh / synthetic documentation fixture"
+          }
+        ]
+      }
+    ],
+    "removed_hosts": [
+      {
+        "id": 1050,
+        "scan_id": 201,
+        "ip": "192.0.2.50",
+        "hostname": "files.example",
+        "os": "Linux (demo)",
+        "dns_result": {
+          "status": "resolved",
+          "names": [
+            "files.example"
+          ],
+          "server": "192.0.2.53",
+          "transport": "tcp",
+          "method": "PTR",
+          "checked_at": "2026-10-23T09:32:00Z"
+        },
+        "ports": [
+          {
+            "id": 5000,
+            "port": 445,
+            "protocol": "tcp",
+            "state": "open",
+            "service": "microsoft-ds",
+            "version": "Samba 4.19",
+            "banner": "microsoft-ds / synthetic documentation fixture"
+          }
+        ]
+      }
+    ],
+    "changed_hosts": [
+      {
+        "ip": "192.0.2.40",
+        "added_ports": [],
+        "removed_ports": [],
+        "changed_ports": [
+          {
+            "port": 443,
+            "protocol": "tcp",
+            "fields": {
+              "version": {
+                "before": "nginx 1.24",
+                "after": "nginx 1.26"
+              },
+              "title": {
+                "before": "Portal — Demo service",
+                "after": "Portal — Updated demo service"
+              }
+            }
+          }
+        ],
+        "metadata": {}
+      }
+    ],
+    "unchanged_hosts": 3,
+    "warnings": [
+      "Показаны различия записей. Разные цели, профили портов и неполные отчёты могут объяснять отсутствие хоста или порта."
+    ]
+  },
+  "notes": {
+    "description": "Synthetic documentation data. Three scan sources observe different services. No network was scanned. Dashed links are report evidence, not proof of a physical route or pivoting access.",
+    "map_view": {
+      "report_ids": [
+        101,
+        102,
+        103
+      ],
+      "source": 101,
+      "whole_project": false,
+      "merge_parts": false,
+      "network_part_id": 9101
+    }
+  },
+  "import_preview": {
+    "name": "Demo - service reachability",
+    "parts": 1,
+    "reports": 3,
+    "files": 6,
+    "bytes": 9131,
+    "observed_from": "2026-10-23T09:30:00Z",
+    "observed_to": "2026-10-23T09:50:00Z"
+  },
+  "port_profiles": {
+    "quick": {
+      "ports": "21,22,23,25,53,80,88,110,111,135,139,143,389,443,445,464,636,993,995,1723,3268,3269,3306,3389,5900,5985,5986,8006,8080,8443,9389",
+      "count": 31
+    },
+    "web": {
+      "ports": "80,81,443,591,593,832,981,1010,1311,2082,2087,2095,2096,2480,3000,3128,3333,4243,4567,4711,4712,4993,5000,5104,5108,5280,5281,5555,5800,5801,5802,5900,5901,6082,6443,7001,7002,7396,7474,7547,8000,8001,8006,8008,8009,8010,8042,8069,8080,8081,8088,8090,8091,8118,8123,8172,8180,8200,8222,8243,8280,8281,8300,8333,8443,8447,8500,8800,8834,8880,8888,8983,9000,9001,9002,9003,9043,9060,9080,9090,9091,9092,9100,9200,9443,9800,9981,9982,9983,9984,9985,9986,9987,9988,9989,9990,9991,9992,9993,9994,9995,9996,9997,9998,9999,10000,10250,10443,28017",
+      "count": 109
+    },
+    "top100": {
+      "ports": "dynamic",
+      "count": 100
+    },
+    "top1000": {
+      "ports": "dynamic",
+      "count": 1000
+    },
+    "full": {
+      "ports": "1-65535",
+      "count": 65535
+    },
+    "custom": {
+      "ports": "dynamic",
+      "count": null
+    }
+  },
+  "speed_profiles": {
+    "normal": {
+      "label": "Normal",
+      "rustscan": {
+        "batch": "1000",
+        "timeout": "5000",
+        "tries": "2",
+        "ulimit": "5000"
+      },
+      "nmap": {
+        "version": "-sV --version-intensity 2",
+        "timing": "-T4",
+        "host_timeout": "90s",
+        "extra": []
+      }
+    },
+    "fast": {
+      "label": "Fast",
+      "rustscan": {
+        "batch": "2000",
+        "timeout": "3000",
+        "tries": "1",
+        "ulimit": "5000"
+      },
+      "nmap": {
+        "version": "-sV --version-intensity 1",
+        "timing": "-T4",
+        "host_timeout": "60s",
+        "extra": [
+          "--min-parallelism",
+          "20",
+          "--max-retries",
+          "1"
+        ]
+      }
+    },
+    "hard": {
+      "label": "Hard",
+      "rustscan": {
+        "batch": "2500",
+        "timeout": "2000",
+        "tries": "2",
+        "ulimit": "10000"
+      },
+      "nmap": {
+        "version": "-sV --version-intensity 1",
+        "timing": "-T4",
+        "host_timeout": "45s",
+        "extra": [
+          "--min-parallelism",
+          "40",
+          "--max-retries",
+          "1",
+          "--min-rate",
+          "200"
+        ]
+      }
+    }
+  }
+}

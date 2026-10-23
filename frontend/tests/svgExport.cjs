@@ -1,0 +1,20 @@
+const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),assert=require('node:assert/strict'),babel=require('@babel/core');
+const cache={};
+function load(file){if(cache[file])return cache[file];const code=babel.transformSync(fs.readFileSync(path.join(__dirname,'../src/utils',file+'.ts'),'utf8'),{filename:file+'.ts',presets:['@babel/preset-typescript'],plugins:['@babel/plugin-transform-modules-commonjs']}).code;const box={exports:{},require:name=>name.includes('i18n/core')?require('./helpers/i18n.cjs'):load(name.replace('./',''))};vm.runInNewContext(code,box);return cache[file]=box.exports;}
+const {fullMapSvg}=load('svgExport');
+const id=ip=>JSON.stringify([null,ip]);
+const report=(n,source)=>({id:n,source_host:source,network:'<LAN>',author:'A&B',observed_at:'2026-10-20',network_part_id:null});
+const host=(ip,n)=>({device_id:id(ip),ip,network:'<LAN>',hostname:null,protocol:'tcp',port:443,cells:[{report_id:n,state:'found',service:'https'}]});
+const data={merge_parts:true,columns:[report(1,'192.0.2.1'),report(2,'192.0.2.3'),report(3,'remote')],rows:[host('192.0.2.2',1),host('192.0.2.3',1),host('192.0.2.1',2),host('198.51.100.1',3),{...host('203.0.113.1',1),cells:[]}]};
+const svg=fullMapSvg(data,'Project <test> & "quote"');
+for(const label of ['192.0.2.1','192.0.2.2','192.0.2.3','198.51.100.1','203.0.113.1','remote'])assert(svg.includes(label),label);
+assert(!svg.includes('<LAN>'));assert(svg.includes('&lt;LAN&gt;'));assert(svg.includes('A&amp;B'));assert(svg.includes('Project &lt;test&gt; &amp; &quot;quote&quot;'));
+assert(!svg.includes('var('));assert(!svg.includes('<script'));assert.equal((svg.match(/<rect x=/g)||[]).length,6,'cycles and shared nodes render once');
+fs.writeFileSync('/tmp/webscanner-map-preview.svg',svg);
+const large={merge_parts:true,columns:[report(1,'outside')],rows:Array.from({length:300},(_,i)=>host(`10.0.${Math.floor(i/256)}.${i%256}`,1))};
+const largeSvg=fullMapSvg(large,'Large map');assert.equal((largeSvg.match(/<rect x=/g)||[]).length,301);assert(Number(largeSvg.match(/height="(\d+)"/)[1])>28000,'full canvas exceeds viewport');
+console.log('PASS: standalone SVG, disconnected and isolated devices, cycles, escaping, evidence, 300-host full canvas');
+const i18n=require('./helpers/i18n.cjs');i18n.setLanguage('en');
+const localized=fullMapSvg({...data,columns:data.columns.map(c=>({...c,observed_at:'2026-10-23T18:45:00'}))},'Network map');
+assert(!/[А-Яа-яЁё]/.test(localized),'English SVG labels and dates contain no untranslated UI text');assert(localized.includes('18:45'));assert(!/\b(?:AM|PM)\b/.test(localized));
+i18n.setLanguage('ru');console.log('PASS: English SVG labels and report times use the 24-hour clock');

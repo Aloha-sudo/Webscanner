@@ -1,8 +1,7 @@
-FROM python:3.11-slim
+FROM python:3.11-slim AS rustscan-builder
 
-RUN apt-get update && apt-get install -y \
-    nmap masscan curl wget git unzip build-essential libpq-dev \
-    chromium chromium-driver \
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    ca-certificates curl git build-essential \
     && rm -rf /var/lib/apt/lists/*
 
 # === RUSTSCAN ===
@@ -12,6 +11,14 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
     cp $HOME/.cargo/bin/rustscan /usr/local/bin/rustscan && \
     chmod +x /usr/local/bin/rustscan && \
     rm -rf $HOME/.cargo $HOME/.rustup
+
+FROM python:3.11-slim
+
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    ca-certificates nmap chromium curl wget unzip \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=rustscan-builder /usr/local/bin/rustscan /usr/local/bin/rustscan
 
 # === PIP requirements (ДО httpx!) ===
 WORKDIR /app

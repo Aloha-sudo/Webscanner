@@ -3,10 +3,24 @@ import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
-from app.core.web_discovery import extract_urls, supplement_httpx
+from app.core.web_discovery import extract_urls, supplement_httpx, target_hostname
 
 
 class WebTests(unittest.TestCase):
+    def test_explicit_domain_survives_ip_only_nmap(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'nmap.xml'
+            path.write_text('<nmaprun><host><address addr="188.227.14.105" addrtype="ipv4"/><ports><port protocol="tcp" portid="80"><state state="open"/><service name="http"/></port><port protocol="tcp" portid="443"><state state="open"/><service name="http" tunnel="ssl"/></port></ports></host></nmaprun>')
+            domain = 'nextcloud.ultramegalastdep.netcraze.club'
+            self.assertEqual(extract_urls(path, {80, 443}, target=domain), [
+                f'http://{domain}:80', f'https://{domain}:80',
+                f'https://{domain}:443', f'http://{domain}:443'])
+            self.assertIn('http://188.227.14.105:80', extract_urls(path, {80, 443}, target='188.227.14.105'))
+
+    def test_networks_and_urls_are_not_virtual_host_names(self):
+        for target in ('192.168.1.0/24', '192.168.1.1', 'https://example.com', None):
+            self.assertIsNone(target_hostname(target))
+
     def test_proxmox_wrong_nmap_name_checks_https_and_http(self):
         with tempfile.TemporaryDirectory() as d:
             p=Path(d)/'nmap.xml'

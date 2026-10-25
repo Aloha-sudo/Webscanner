@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 from sqlalchemy.orm import Session
 
 from app.reports.httpx_results import normalize_result
-from app.core.web_discovery import extract_urls
+from app.core.web_discovery import extract_urls, target_hostname
 from app.core.exclusions import allowed_targets, excluded_ports
 from app.core.text import database_text, error_text
 from app.core.process import ScanCancelled, execute
@@ -275,8 +275,8 @@ def parse_nmap(path: str) -> list:
     return hosts
 
 
-def extract_urls_from_nmap(path: str) -> list:
-    return extract_urls(path, {int(p) for p in settings.PORT_PROFILES['web'].split(',')})
+def extract_urls_from_nmap(path: str, target=None) -> list:
+    return extract_urls(path, {int(p) for p in settings.PORT_PROFILES['web'].split(',')}, target=target)
 
 
 
@@ -285,6 +285,9 @@ def parse_httpx(db: Session, scan_id: int, path: str):
         return 0
 
     matched_ports = set()
+    scan = db.get(Scan, scan_id)
+    hostname = target_hostname(scan.target) if scan else None
+    target_addresses = {hostname: [h.ip for h in db.query(Host).filter(Host.scan_id == scan_id).all()]} if hostname else {}
     try:
         with open(path) as f:
             for line in f:
@@ -296,7 +299,7 @@ def parse_httpx(db: Session, scan_id: int, path: str):
                 except json.JSONDecodeError:
                     continue
 
-                normalized = normalize_result(data)
+                normalized = normalize_result(data, target_addresses)
                 if normalized is None:
                     continue
                 url = normalized['url']
@@ -638,7 +641,7 @@ def run_scan(self, scan_id: int, scan_type: str = "quick", custom_ports: str = N
         print(f"[{scan_id}] ЭТАП 3: httpx")
         update_scan(db, scan_id, stage="httpx", progress=75)
 
-        urls = extract_urls_from_nmap(nmap_output)
+        urls = extract_urls_from_nmap(nmap_output, target=scan.target)
         total_web = 0
 
         if urls:

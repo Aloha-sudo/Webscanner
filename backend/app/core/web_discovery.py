@@ -1,6 +1,7 @@
 """Web candidates and a TLS-tolerant fallback for private admin panels."""
 import http.client
 import json
+import ipaddress
 import re
 import ssl
 import urllib.request
@@ -9,8 +10,23 @@ from urllib.parse import urlsplit
 import xml.etree.ElementTree as ET
 
 
-def extract_urls(path, web_ports):
+def target_hostname(target):
+    """Only the explicit scan target is a virtual host, never a guessed PTR name."""
+    if not target:
+        return None
+    try:
+        ipaddress.ip_network(target, strict=False)
+        return None
+    except ValueError:
+        pass
+    if not re.fullmatch(r'(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)*[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?', target):
+        return None
+    return target.lower()
+
+
+def extract_urls(path, web_ports, target=None):
     urls = []
+    hostname = target_hostname(target)
     for host in ET.parse(path).getroot().findall('host'):
         ip = next((a.get('addr') for a in host.findall('address') if a.get('addrtype') in ('ipv4', 'ipv6')), None)
         if not ip:
@@ -25,7 +41,7 @@ def extract_urls(path, web_ports):
             tunnel = service.get('tunnel', '') if service is not None else ''
             if number not in web_ports and 'http' not in name:
                 continue
-            address = f'[{ip}]' if ':' in ip else ip
+            address = hostname or (f'[{ip}]' if ':' in ip else ip)
             schemes = ('https', 'http') if tunnel == 'ssl' or 'https' in name or number in (443,8006,8443,9443) else ('http','https')
             urls.extend(f'{scheme}://{address}:{number}' for scheme in schemes)
     return list(dict.fromkeys(urls))

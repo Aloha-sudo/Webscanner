@@ -36,7 +36,7 @@ export async function createScan(
     ...context,
     dns_options: dnsOptions,
   };
-  if (scanType === 'custom' && ports) {
+  if ((scanType === 'custom' || scanType === 'udp_custom') && ports) {
     body.ports = ports;
   }
   if (comment && comment.trim()) {

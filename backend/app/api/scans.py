@@ -50,7 +50,7 @@ def get_port_profiles():
     for name, ports in settings.PORT_PROFILES.items():
         result[name] = {
             "ports": ports if ports else "dynamic",
-            "count": 100 if name == "top100" else 1000 if name == "top1000" else len(ports.split(",")) if ports and "-" not in ports else None,
+            "count": 100 if name in ("top100", "udp_top100") else 1000 if name == "top1000" else len(ports.split(",")) if ports and "-" not in ports else None,
         }
     return result
 
@@ -63,14 +63,14 @@ def create_scan(payload: ScanCreate, db: Session = Depends(get_db)):
 def enqueue_scan(payload: ScanCreate, db: Session, retry_of_id=None):
     """Создать новый скан."""
     # Валидация scan_type
-    valid_types = {"quick", "top100", "top1000", "web", "full", "custom"}
+    valid_types = set(settings.PORT_PROFILES)
     if payload.scan_type not in valid_types:
         raise HTTPException(
             status_code=400,
             detail=f"Invalid scan_type. Use: {sorted(valid_types)}",
         )
 
-    if payload.scan_type == "custom" and not payload.ports:
+    if payload.scan_type in ("custom", "udp_custom") and not payload.ports:
         raise HTTPException(
             status_code=400,
             detail="ports required for custom scan_type",
@@ -125,7 +125,6 @@ def enqueue_scan(payload: ScanCreate, db: Session, retry_of_id=None):
 @router.post('/{scan_id}/retry', response_model=ScanResponse, status_code=201)
 def retry_scan(scan_id: int, overrides: dict | None = None, db: Session = Depends(get_db)):
     from app.core.retry import retry_payload
-    from pydantic import ValidationError
     scan = db.get(Scan, scan_id)
     if not scan:
         raise HTTPException(404, 'Скан не найден')
@@ -138,7 +137,7 @@ def retry_scan(scan_id: int, overrides: dict | None = None, db: Session = Depend
         raise HTTPException(422, 'Неподдерживаемые параметры повтора')
     try:
         payload = retry_payload(scan, overrides)
-    except ValidationError as exc:
+    except ValueError as exc:
         raise HTTPException(422, str(exc))
     return enqueue_scan(payload, db, retry_of_id=scan.id)
 
@@ -186,11 +185,10 @@ def ip_sort_key(ip: str):
 @router.post('/import', response_model=ScanDetailResponse, status_code=201)
 async def import_report(file: UploadFile = File(...), comment: str = Form('', max_length=1000), metadata: str = Form('{}', max_length=12000), db: Session = Depends(get_db)):
     from app.reports.parser import parse_report
-    from pydantic import ValidationError
     try:
         team = TeamMetadata.model_validate_json(metadata)
         team = TeamMetadata(**resolve_context(db,team,Project,NetworkPart))
-    except (ValidationError, ValueError) as exc:
+    except ValueError as exc:
         raise HTTPException(422, str(exc))
     try:
         content = await file.read(20 * 1024 * 1024 + 1)
@@ -317,9 +315,9 @@ def visibility(report_ids: str = Query(..., max_length=2000), project_id: int | 
         raise HTTPException(422,'В выбранных отчётах больше 50000 портов. Выберите меньше отчётов')
     for id in ids:
         s=lookup[id]
-        reports.append({'id':s.id,'target':s.target, **{k:getattr(s,k) for k in TeamMetadata.model_fields},'created_at':s.created_at,'exclude_ips':s.exclude_ips,'exclude_ports':s.exclude_ports,'exclude_hosts':s.exclude_hosts,
+        reports.append({'id':s.id,'target':s.target,'scan_type':s.scan_type, **{k:getattr(s,k) for k in TeamMetadata.model_fields},'created_at':s.created_at,'exclude_ips':s.exclude_ips,'exclude_ports':s.exclude_ports,'exclude_hosts':s.exclude_hosts,
                         'scope_confirmed':s.scope_confirmed and s.status==ScanStatus.COMPLETED,
-                        'hosts':[{'ip':h.ip,'hostname':h.hostname,'ports':[{'port':p.port,'protocol':p.protocol,'service':p.service,'version':p.version} for p in h.ports]} for h in s.hosts]})
+                        'hosts':[{'ip':h.ip,'hostname':h.hostname,'ports':[{'port':p.port,'protocol':p.protocol,'state':p.state,'service':p.service,'version':p.version} for p in h.ports]} for h in s.hosts]})
     try:
         return build_visibility(reports,whole_project=whole_project,merge_parts=whole_project and merge_parts)
     except ValueError as exc:
@@ -538,6 +536,7 @@ def _scan_to_dict(scan: Scan) -> dict:
             "id": scan.id,
             "target": scan.target,
             "scan_type": scan.scan_type,
+            "proxy_options": scan.proxy_options,
             "dns_options": scan.dns_options,
             "dns_status": scan.dns_status,
             "dns_summary": scan.dns_summary,

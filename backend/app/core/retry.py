@@ -3,6 +3,8 @@ from app.schemas.scan import ScanCreate
 
 
 def retry_payload(scan, overrides=None):
+    if getattr(scan, 'proxy_options', None):
+        raise ValueError('Сканирование через прокси удалено. Импортируйте готовый отчёт.')
     fields = ('target', 'scan_type', 'ports', 'comment', 'speed',
               'exclude_ips', 'exclude_hosts', 'exclude_ports',
               'project_id', 'network_part_id', 'source_host', 'author', 'dns_options')

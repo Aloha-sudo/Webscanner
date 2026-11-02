@@ -22,6 +22,9 @@ export function formatDuration(seconds: number | null | undefined): string {
  */
 export function profileLabel(scan: { scan_type: string; ports?: string | null }): string {
   switch (scan.scan_type) {
+    case 'udp_quick': return t("Основные UDP");
+    case 'udp_top100': return t("Топ 100 UDP");
+    case 'udp_custom': return t("Свои UDP-порты");
     case 'quick':   return t("Быстрый");
     case 'top100': return t("Топ 100");
     case 'top1000': return t("1000 портов");
@@ -41,7 +44,7 @@ function truncate(s: string, n: number): string {
 }
 
 export function stageLabel(stage: string): string {
-  const stages: Record<string,string> = {queued:t("Ожидание worker"),starting:t("Подготовка"),rustscan:t("Поиск портов"),verifying:t("Проверка портов"),nmap:t("Определение сервисов"),parsing_nmap:t("Обработка результатов"),dns:t("Определение DNS-имён (до 60 секунд)"),httpx:t("Проверка веб-сервисов"),web_fallback:t("Дополнительная проверка HTTPS (до 2 минут)"),gowitness:t("Создание скриншотов"),completed:t("Завершено"),failed:t("Ошибка"),cancelled:t("Отменено"),imported:t("Загружен из файла")};
+  const stages: Record<string,string> = {udp:t("UDP-сканирование"),queued:t("Ожидание worker"),starting:t("Подготовка"),rustscan:t("Поиск портов"),verifying:t("Проверка портов"),nmap:t("Определение сервисов"),parsing_nmap:t("Обработка результатов"),dns:t("Определение DNS-имён (до 60 секунд)"),httpx:t("Проверка веб-сервисов"),web_fallback:t("Дополнительная проверка HTTPS (до 2 минут)"),gowitness:t("Создание скриншотов"),completed:t("Завершено"),failed:t("Ошибка"),cancelled:t("Отменено"),imported:t("Загружен из файла")};
   return stages[stage] || stage;
 }
 

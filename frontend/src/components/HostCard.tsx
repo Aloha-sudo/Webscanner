@@ -53,6 +53,7 @@ export default function HostCard({ host, matchedPorts }: HostCardProps) {
                 <div className="flex-1 space-y-1">
                   <div className="flex items-center gap-2">
                     <span className="text-sm text-gray-300">{port.service || 'unknown'}</span>
+                    <span className="text-xs" title={port.state==='open|filtered'?t("Нет ответа: порт открыт или фильтруется"):undefined}>{port.state}</span>
                     {port.version && (
                       <span className="text-xs text-gray-500 font-mono">{port.version}</span>
                     )}

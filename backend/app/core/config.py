@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     MASSCAN_RATE: int = 100
     RUSTSCAN_TIMEOUT: int = 900
     NMAP_TIMEOUT: int = 600
+    UDP_TIMEOUT: int = 1800
     HTTX_TIMEOUT: int = 300
     GOWITNESS_TIMEOUT: int = 300
 
@@ -45,6 +46,9 @@ class Settings(BaseSettings):
 
         # Пользовательский — из payload.ports
         "custom": None,
+        "udp_quick": "53,69,111,123,137,138,161,389,500,514,520,623,1434,1900,4500,5353",
+        "udp_top100": None,
+        "udp_custom": None,
     }
 
     class Config:

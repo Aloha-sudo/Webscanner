@@ -22,7 +22,7 @@ type Visibility = {columns:Column[];rows:Row[];warnings:string[];merge_parts?:bo
 type Queued = {file:File;source:string;author:string;observed:string;status:string;id?:number};
 const states:Record<string,string> = {get found() {
   return t("Обнаружено");
-},get unknown() {
+},get uncertain() { return t("Неопределённо (open|filtered)"); },get unknown() {
   return t("Нет данных");
 },get not_found() {
   return t("Не обнаружено");

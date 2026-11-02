@@ -93,6 +93,7 @@ flowchart LR
 
 ### More than a map
 
+- **[Active UDP scanning](docs/udp.md):** common ports, Top 100 and custom lists; confirmed and uncertain results remain distinct.
 - **Active TCP scanning:** RustScan → Nmap verification → service detection → httpx → Gowitness screenshots.
 - **Report imports:** Nmap, Masscan, RustScan, FastScan, CSV and WebScanner formats.
 - **Scan history:** progress, cancellation, retry, port profiles and exclusions.
@@ -100,6 +101,10 @@ flowchart LR
 - **Project organization:** network segments, scan sources, authors, comments and observation dates.
 - **RU / EN interface:** light and dark themes, with a **24-hour clock** in both languages.
 - **CLI:** create projects, submit scans, inspect status, retry and import reports from the terminal.
+
+## Team workflow
+
+Team members run their own scans from the appropriate network locations, then import reports with a project, network segment, source and author. WebScanner combines those observations for comparison and mapping. Built-in TCP/UDP scans run directly from the worker; proxy scanning is not included.
 
 ## Run locally
 
@@ -141,6 +146,7 @@ Back up **PostgreSQL and `scans/` together**. `docker compose down -v` deletes t
 | [Network map](docs/network-map.md) | Branches, neighborhoods, service filters and evidence |
 | [Project transfer](docs/project-transfer.md) | SVG export, complete project archives and saved maps |
 | [CLI](docs/cli.md) | Command-line usage |
+| [UDP scanning](docs/udp.md) | Profiles, limits and `open|filtered` results |
 | [DNS](docs/dns.md) | Hostname resolution and its limits |
 | [Languages](docs/languages.md) | RU / EN and 24-hour formatting |
 | [Validation](docs/validation.md) | What has and has not been checked |

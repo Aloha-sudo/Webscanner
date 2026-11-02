@@ -1,21 +1,23 @@
-# Validation of the GitHub source package
+# Validation of the GitHub source update
 
-The source package is prepared separately from the working installation. No runtime database, reports, screenshots, private backups or existing Git history are included.
+Prepared on 2026-11-02 from the current working source. Runtime databases, real scan reports and screenshots, credentials, backups, local previews, dependency folders and Git history are excluded. The documentation gallery and demo project contain the existing synthetic examples.
 
-Checks run against this prepared folder:
+Checks run for this update:
 
-- 88 Python unit tests on SQLite / mocked services: passed.
-- API retry fixture: passed.
-- `npm test`: all JavaScript logic and component fixtures passed, including RU / EN and 24-hour time.
-- TS / TSX and CSS syntax parsing: passed.
-- Local documentation links and package contents: passed.
-- Compose interpolation/configuration validation: passed using a placeholder password; no services were started.
+- 104 Python unit tests on SQLite and mocked services: passed.
+- API fixture: enqueue/retry, malformed import metadata, custom UDP ports, rejected removed proxy requests and queue failures passed.
+- All frontend JavaScript logic and component fixtures in `frontend/tests/run.cjs`: passed.
+- TS/TSX and CSS syntax parsing: passed.
+- Documentation links, source/update archive contents, checksums and common credential patterns: checked during packaging.
+- Published Compose configuration is retained from the existing repository: `.env` password configuration and UI bound to localhost. It is validated with a placeholder password; no services are started.
 
-Limits of this environment:
+The package preserves the published frontend test/typecheck commands and their declared Babel dependencies. Local deployment-specific Compose settings are not copied into the public source folder. Existing source licensing is unchanged.
 
-- A complete Vite build and TypeScript type check require frontend packages that were not installed in the preparation environment.
-- Docker engine access is unavailable here; image builds and a full PostgreSQL / Redis / Celery startup have not been verified for this package.
-- Scanner execution against a real target and browser integration were not run.
-- Dependency lockfiles are not supplied; resolve and review dependencies in your own environment before treating a build as reproducible.
+Not verified in this environment:
 
-The package includes declared Babel test dependencies and `npm test` so these checks do not depend on globally installed development packages on a new machine.
+- A full Vite build and TypeScript typecheck: frontend packages are not installed, and package-registry access is unavailable.
+- Docker image builds and full PostgreSQL/Redis/Celery startup: Docker engine access is unavailable.
+- Live network scanning and browser integration: the environment blocks the required sockets.
+- Dependency lockfiles are not supplied, so builds are not fully reproducible.
+
+The gallery captures predate the compact protocol/UDP form changes; they are retained as documentation of the broader interface, not as verification of the updated layout.

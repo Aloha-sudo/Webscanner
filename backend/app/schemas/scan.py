@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, computed_field, field_validator
+from pydantic import BaseModel, Field, computed_field, field_validator, model_validator
 from typing import Optional, List
 from datetime import datetime
 from app.schemas.dns import DnsOptions
@@ -42,11 +42,18 @@ class TeamMetadata(BaseModel):
 
 
 class ScanCreate(TeamMetadata):
+    @model_validator(mode="before")
+    @classmethod
+    def reject_removed_proxy_mode(cls, value):
+        if isinstance(value, dict) and value.get('proxy_options') is not None:
+            raise ValueError('Сканирование через прокси удалено. Импортируйте готовый отчёт.')
+        return value
+
     dns_options: Optional[DnsOptions] = None
     target: str = Field(..., description="IP, CIDR или домен")
     scan_type: str = Field(
         "quick",
-        description="quick, top100, top1000, web, full, custom",
+        description="quick, top100, top1000, web, full, custom, udp_quick, udp_top100, udp_custom",
     )
     ports: Optional[str] = Field(
         None,

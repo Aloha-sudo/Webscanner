@@ -10,7 +10,7 @@ from app.core.web_discovery import extract_urls, target_hostname
 from app.core.exclusions import allowed_targets, excluded_ports
 from app.core.text import database_text, error_text
 from app.core.process import ScanCancelled, execute
-from app.core.ports import top_tcp_ports
+from app.core.ports import top_tcp_ports, top_ports
 from app.core.celery_app import celery_app
 from app.core import dns_jobs  # Register the standalone DNS task on every worker startup.
 from app.core.db import SessionLocal
@@ -55,7 +55,11 @@ def resolve_ports(scan_type: str, custom_ports: str = None):
     """
     profiles = settings.PORT_PROFILES
 
-    if scan_type == "custom":
+    if scan_type == "udp_top100":
+        ports = top_ports(count=100, protocol="udp")
+        return ports, ports, []
+
+    if scan_type in ("custom", "udp_custom"):
         if not custom_ports:
             raise ValueError("custom_ports required for custom scan")
         import re as _re
@@ -214,6 +218,8 @@ def parse_nmap(path: str) -> list:
     try:
         tree = ET.parse(path)
         root = tree.getroot()
+        from app.reports.nmap_states import expand_udp_states
+        expand_udp_states(root)
 
         for host_elem in root.findall("host"):
             status = host_elem.find("status")
@@ -244,13 +250,15 @@ def parse_nmap(path: str) -> list:
             if ports_elem is not None:
                 for port_elem in ports_elem.findall("port"):
                     state = port_elem.find("state")
-                    if state is None or state.get("state") != "open":
+                    if state is None or state.get("state") not in ("open", "open|filtered"):
+                        continue
+                    if state.get("state") == "open|filtered" and port_elem.get("protocol") != "udp":
                         continue
 
                     port_data = {
                         "port": int(port_elem.get("portid")),
                         "protocol": port_elem.get("protocol", "tcp"),
-                        "state": "open",
+                        "state": state.get("state"),
                     }
 
                     service = port_elem.find("service")
@@ -386,8 +394,62 @@ def save_screenshots_local(db: Session, scan_id: int, screenshots_dir: str):
 #  ОСНОВНАЯ ЗАДАЧА
 # ============================================================
 
+
+def run_udp_scan(db, scan, scan_dir, scan_type, custom_ports, speed, blocked_ports):
+    """Independent direct UDP inventory; TCP discovery must not gate UDP hosts."""
+    ports, _, _ = resolve_ports(scan_type, custom_ports)
+    selected = sorted({int(p) for p in expand_ports(ports).split(',')} - blocked_ports)
+    if not selected:
+        raise ValueError('Все UDP-порты исключены: скан не запущен')
+    if len(selected) > 1000:
+        raise ValueError('Максимум 1000 UDP-портов в одном запуске')
+    targets = allowed_targets(scan.target, scan.exclude_ips, scan.exclude_hosts)
+    if len(targets) > 256:
+        raise ValueError('Максимум 256 адресов в одном UDP-скане')
+    target_file = os.path.join(scan_dir, 'udp_targets.txt')
+    with open(target_file, 'w') as f:
+        f.write('\n'.join(targets))
+    output = os.path.join(scan_dir, 'nmap.xml')
+    update_scan(db, scan.id, stage='udp', progress=20)
+    # No per-host timeout: a partial report must not become a completed scan.
+    timing = {'normal': '-T3', 'fast': '-T4', 'hard': '-T4'}[speed]
+    run_command([
+        'nmap', '-sU', '-sV', '--version-light', timing, '-Pn', '-n',
+        '--reason', '--open', '-iL', target_file,
+        '-p', ','.join(map(str, selected)), '-oX', output,
+    ], timeout=settings.UDP_TIMEOUT, scan_id=scan.id)
+    import xml.etree.ElementTree as ET
+    finished = ET.parse(output).getroot().find('runstats/finished')
+    if finished is None or finished.get('exit') != 'success':
+        raise RuntimeError('UDP scan did not finish successfully; raw report retained')
+    hosts_data = parse_nmap(output)
+    for data in hosts_data:
+        host = Host(scan_id=scan.id, ip=data['ip'], hostname=data.get('hostname'))
+        db.add(host)
+        db.flush()
+        for port in data['ports']:
+            db.add(Port(host_id=host.id, **port))
+    db.commit()
+    total_ports = sum(len(h['ports']) for h in hosts_data)
+    total_services = sum(p['state'] == 'open' and bool(p.get('service'))
+                         for h in hosts_data for p in h['ports'])
+    update_scan(db, scan.id, total_hosts=len(hosts_data), total_ports=total_ports,
+                total_services=total_services, progress=85)
+    if scan.dns_options and scan.dns_options.get('enabled') and hosts_data:
+        from app.core.dns_jobs import new_dns_job, run_dns_job
+        scan = update_scan(db, scan.id, stage='dns')
+        token = new_dns_job(scan, scan.dns_options)
+        db.commit()
+        run_dns_job(scan.id, token, check_cancelled=lambda: ensure_active(scan.id))
+        db.expire_all()
+    ensure_active(scan.id)
+    update_scan(db, scan.id, status=ScanStatus.COMPLETED, stage='completed',
+                progress=100, finished_at=datetime.now(timezone.utc))
+    return {'status': 'completed', 'hosts': len(hosts_data), 'ports': total_ports}
+
+
 @celery_app.task(bind=True, name="run_scan")
-def run_scan(self, scan_id: int, scan_type: str = "quick", custom_ports: str = None, speed: str = "normal", exclusions: dict = None, dns_requested: bool = False):
+def run_scan(self, scan_id: int, scan_type: str = "quick", custom_ports: str = None, speed: str = "normal", exclusions: dict = None, dns_requested: bool = False, proxy_requested: bool = False):
     """
     Пайплайн: rustscan -> nmap -> httpx -> gowitness.
     rustscan быстро находит порты, nmap делает глубокий анализ.
@@ -412,9 +474,15 @@ def run_scan(self, scan_id: int, scan_type: str = "quick", custom_ports: str = N
 
         scan_dir = os.path.join(settings.SCANS_DIR, str(scan_id))
         os.makedirs(scan_dir, exist_ok=True)
+        # Compatibility with old queued jobs: never turn them into direct scans.
+        if proxy_requested or scan.proxy_options:
+            raise RuntimeError('Сканирование через прокси удалено. Импортируйте готовый отчёт.')
         target = scan.target
         allowed_ips = None
         blocked_ports = excluded_ports(scan.exclude_ports)
+        if scan_type.startswith("udp_"):
+            return run_udp_scan(db, scan, scan_dir, scan_type, custom_ports, speed, blocked_ports)
+
         if scan.exclude_ips or scan.exclude_hosts:
             allowed_ips = set(allowed_targets(target, scan.exclude_ips, scan.exclude_hosts))
             target_file = os.path.join(scan_dir, 'allowed_targets.txt')

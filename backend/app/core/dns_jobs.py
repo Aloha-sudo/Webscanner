@@ -19,6 +19,8 @@ from app.models.scan import Scan, Host, NetworkPart
 
 
 def new_dns_job(scan, options):
+    if getattr(scan, 'proxy_options', None):
+        raise ValueError('Активные проверки старых прокси-отчётов отключены. Импортируйте готовый отчёт.')
     scan.dns_options = options
     scan.dns_status = 'queued'
     scan.dns_job_id = uuid.uuid4().hex
@@ -40,6 +42,8 @@ def run_dns_job(scan_id, token, check_cancelled=lambda: None):
             if not claimed:
                 return
             scan = db.get(Scan, scan_id)
+            if scan.proxy_options:
+                raise ValueError('Active checks of legacy proxy reports are disabled')
             part = db.get(NetworkPart, scan.network_part_id) if scan.network_part_id else None
             options = dict(scan.dns_options or {})
             payload = {'options': options, 'saved': part.dns_defaults if part else None, 'blocked_ports': sorted(excluded_ports(scan.exclude_ports)), 'hosts': [{'ip': h.ip, 'ports': [{'port': p.port, 'protocol': p.protocol} for p in h.ports]} for h in scan.hosts]}

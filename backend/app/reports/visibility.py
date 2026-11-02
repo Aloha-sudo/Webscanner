@@ -28,7 +28,9 @@ def build_visibility(reports, whole_project=False, merge_parts=False):
         identity=None if merge_parts else part
         found={}
         for host in report['hosts']:
-            for port in [{'port':0,'protocol':'host','service':None}]+host['ports']:
+            confirmed = not host['ports'] or any(p.get('state', 'open') == 'open' for p in host['ports'])
+            host_rows = [{'port':0,'protocol':'host','service':None}] if confirmed else []
+            for port in host_rows + host['ports']:
                 key=(identity,host['ip'],port.get('protocol','tcp'),port['port'])
                 found[key]=port
                 row=rows.setdefault(key,{'device_id':json.dumps([identity,host['ip']],ensure_ascii=False),'ip':host['ip'],'protocol':key[2],'port':key[3],
@@ -41,10 +43,10 @@ def build_visibility(reports, whole_project=False, merge_parts=False):
     for key,row in rows.items():
         if len(row['parts'])>1:row['network']=' / '.join(row['parts'])
         for report,found in zip(reports,observations):
-            item=found.get(key);state='found' if item else 'unknown'
+            item=found.get(key);state=('uncertain' if item.get('state') == 'open|filtered' else 'found') if item else 'unknown'
             same_part=merge_parts or key[0]==(report.get('network_part_id') or report['network'])
             if same_part and not report.get('exclude_hosts') and key[2]!='host' and not item and report.get('scope_confirmed') and report.get('scope_targets') and report.get('scope_ports'):
-                state='not_found' if not host_in_scope(key[1],report.get('exclude_ips')) and not port_in_scope(key[3],report.get('exclude_ports')) and key[2]=='tcp' and host_in_scope(key[1],report['scope_targets']) and port_in_scope(key[3],report['scope_ports']) else 'not_tested'
+                state='not_found' if not host_in_scope(key[1],report.get('exclude_ips')) and not port_in_scope(key[3],report.get('exclude_ports')) and key[2]=='tcp' and not report.get('scan_type', '').startswith('udp_') and host_in_scope(key[1],report['scope_targets']) and port_in_scope(key[3],report['scope_ports']) else 'not_tested'
             row['cells'].append({'report_id':report['id'],'state':state,'service':item.get('service') if item else None,'version':item.get('version') if item else None})
     columns=[{k:r.get(k) for k in ('id','target','source_host','author','observed_at','created_at','scope_confirmed','scope_targets','scope_ports','network','network_part_id')} for r in reports]
     result=sorted(rows.values(),key=lambda r:(r['network'],ipaddress.ip_address(r['ip']).version,int(ipaddress.ip_address(r['ip'])),r['protocol'],r['port']))

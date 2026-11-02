@@ -153,7 +153,7 @@ def parser():
     def waiting(q):
         q.add_argument('--wait', action='store_true'); q.add_argument('--wait-timeout', type=int, default=3600)
     scan = sub.add_parser('scan'); scan.add_argument('target'); context_args(scan); waiting(scan)
-    scan.add_argument('--profile', choices=['quick','top100','top1000','web','full','custom'], default='quick')
+    scan.add_argument('--profile', choices=['quick','top100','top1000','web','full','custom','udp_quick','udp_top100','udp_custom'], default='quick')
     scan.add_argument('--speed', choices=['normal','fast','hard'], default='normal')
     for field in ('ports','comment','exclude-ips','exclude-hosts','exclude-ports'): scan.add_argument('--'+field)
     scans = sub.add_parser('scans').add_subparsers(dest='action', required=True)

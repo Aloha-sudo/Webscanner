@@ -672,5 +672,18 @@
   "Укажите время в формате HH:mm, от 00:00 до 23:59": "Enter time as HH:mm, from 00:00 to 23:59",
   "Проект «{v0}»: частей сети — {v1}, отчётов — {v2}, файлов — {v3}. Объём: {v4} МБ.": "Project “{v0}”: network segments — {v1}, reports — {v2}, files — {v3}. Size: {v4} MB.",
   "Сохранены в общем списке и в проекте «{v0}».": "Saved in the history and project “{v0}”.",
-  "Имена получены: {v0} из {v1}": "Names resolved: {v0} of {v1}"
+  "Имена получены: {v0} из {v1}": "Names resolved: {v0} of {v1}",
+  "Основные UDP": "Common UDP",
+  "Топ 100 UDP": "Top 100 UDP",
+  "Свои UDP-порты": "Custom UDP ports",
+  "100 популярных UDP-портов по nmap-services": "100 popular UDP ports from nmap-services",
+  "Протокол сканирования": "Scan protocol",
+  "Нет ответа: порт открыт или фильтруется": "No response: port is open or filtered",
+  "Неопределённо (open|filtered)": "Uncertain (open|filtered)",
+  "UDP-сканирование": "UDP scan",
+  "Подключение": "Connection",
+  "Напрямую": "Direct",
+  "Если ответа нет, результат отмечается как open|filtered: порт может быть открыт или фильтроваться.": "If there is no response, the result is marked open|filtered: the port may be open or filtered.",
+  "Ограничения UDP: до 256 адресов и 1000 портов за запуск, не более 30 минут.": "UDP limits: up to 256 addresses and 1000 ports per run, with a 30-minute time limit.",
+  "UDP-проверка может занять больше времени.": "UDP checks may take longer."
 }

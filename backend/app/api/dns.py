@@ -15,6 +15,8 @@ def resolve_names(scan_id: int, payload: DnsOptions, db: Session = Depends(get_d
     scan = db.query(Scan).filter(Scan.id == scan_id).with_for_update().first()
     if scan is None:
         raise HTTPException(404, 'Скан не найден')
+    if scan.proxy_options:
+        raise HTTPException(409, 'Активные проверки старых прокси-отчётов отключены. Импортируйте готовый отчёт.')
     if scan.status in (ScanStatus.QUEUED, ScanStatus.RUNNING):
         raise HTTPException(409, 'Дождитесь завершения скана')
     if not payload.enabled:

@@ -419,7 +419,7 @@ body { background: var(--page); }
 .compact-form-heading { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:18px; }
 .compact-form-heading h2 { display:flex; align-items:center; gap:9px; font-size:16px; font-weight:600; }
 .compact-form-heading > span { font-size:11px; color:var(--muted); }
-.compact-scan-targets { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+.compact-scan-targets { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.25fr) 104px; align-items:end; gap:14px; }
 .compact-scan-targets label, .compact-port-field, .compact-custom-ports, .compact-exclusion-grid label { display:flex; flex-direction:column; gap:8px; font-size:12px; font-weight:500; color:var(--text-secondary); min-width:0; }
 .scan-form-compact input[type="text"], .scan-form-compact select, .scan-form-compact textarea { width:100%; padding:10px 12px; font-size:13px; font-weight:400; min-width:0; }
 .compact-scan-settings { display:grid; grid-template-columns:minmax(180px,1fr) minmax(320px,1.2fr) auto; gap:18px; align-items:end; margin-top:16px; }
@@ -651,3 +651,10 @@ body { background: var(--page); }
 .reference-preferences .theme-switch { margin-left:0; }
 @media(max-width:1000px) and (min-width:761px) { .reference-header { gap:16px; padding-inline:20px; } .reference-nav { gap:14px; } .reference-preferences .theme-switch button span { display:none; } }
 @media(max-width:760px) { .reference-preferences { order:1; gap:8px; } .reference-preferences .language-switch { margin-left:0; } }
+
+.visibility-state.uncertain { background:var(--subtle); color:var(--text-secondary); border:1px dashed currentColor; }
+
+/* The protocol shares the source/target row and stays compact on mobile. */
+.compact-scan-protocol { width:104px; max-width:104px; }
+.scan-form-compact .compact-scan-protocol select { background:var(--subtle); color:var(--text); border:1px solid var(--border); border-radius:6px; }
+.scan-form-compact .compact-scan-protocol select:focus { outline:2px solid var(--selected); border-color:var(--accent); }

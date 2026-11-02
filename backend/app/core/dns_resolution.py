@@ -30,7 +30,7 @@ def candidates(hosts, options, saved=None, blocked_ports=()):
     if saved and saved.get('server'):
         result.append({'server': saved['server'], 'source': 'saved'})
     if 53 not in blocked_ports:
-        discovered = sorted({h['ip'] for h in hosts if any(p['port'] == 53 and p.get('protocol', 'tcp') in ('tcp', 'udp') for p in h.get('ports', []))}, key=lambda ip: (ipaddress.ip_address(ip).version, int(ipaddress.ip_address(ip))))
+        discovered = sorted({h['ip'] for h in hosts if any(p.get('state', 'open') == 'open' and p['port'] == 53 and p.get('protocol', 'tcp') in ('tcp', 'udp') for p in h.get('ports', []))}, key=lambda ip: (ipaddress.ip_address(ip).version, int(ipaddress.ip_address(ip))))
         result += [{'server': ip, 'source': 'discovered'} for ip in discovered[:6]]
     result += [{'server': ip, 'source': 'system'} for ip in system_servers()]
     unique = {}

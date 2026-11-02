@@ -41,6 +41,8 @@ class Scan(Base):
     dns_summary = Column(JSON, nullable=True)
     dns_job_id = Column(String(40), nullable=True)
     retry_of_id = Column(Integer, nullable=True, index=True)
+    # Historical metadata only; retained for existing reports and project archives.
+    proxy_options = Column(JSON, nullable=True)
     target = Column(String(255), nullable=False, index=True)
     scan_type = Column(String(50), default="quick")
     ports = Column(String(500), nullable=True)   # для custom-профиля

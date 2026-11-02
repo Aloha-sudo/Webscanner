@@ -94,3 +94,9 @@ def migrate(engine):
                     if name not in columns:
                         conn.execute(text(f'ALTER TABLE projects ADD COLUMN {name} {definition}'))
             conn.execute(text('INSERT INTO scanner_schema_version (version) VALUES (9)'))
+
+        if 10 not in versions:
+            columns = {c['name'] for c in inspect(conn).get_columns('scans')}
+            if 'proxy_options' not in columns:
+                conn.execute(text('ALTER TABLE scans ADD COLUMN proxy_options JSON'))
+            conn.execute(text('INSERT INTO scanner_schema_version (version) VALUES (10)'))

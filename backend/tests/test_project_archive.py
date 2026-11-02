@@ -48,6 +48,16 @@ class ProjectArchiveTests(unittest.TestCase):
         self.assertEqual(s.screenshots[0].minio_path,f'local://scan_{s.id}/test.png')
         self.assertEqual((self.root/str(s.id)/'screenshots/test.png').read_bytes(),b'image')
         self.assertEqual((self.root/str(s.id)/'original.xml').read_text(),'<nmaprun/>')
+    def test_legacy_connection_metadata_survives_project_roundtrip(self):
+        self.scan.proxy_options={'host':'192.0.2.10','port':1080,'version':'socks5'}
+        self.db.commit()
+        payload,files=read_archive(self.archive())
+        new=import_project(self.db,payload,files,self.root,'Historical copy')
+        scan=self.db.query(Scan).filter_by(project_id=new).one()
+        self.assertEqual(scan.proxy_options['host'],'192.0.2.10')
+        self.assertEqual(scan.proxy_options['port'],1080)
+        self.assertEqual(scan.proxy_options['version'],'socks5')
+
     def test_active_scan_and_dns_rejected(self):
         self.scan.status='running';self.db.commit()
         with self.assertRaises(ValueError):self.archive()

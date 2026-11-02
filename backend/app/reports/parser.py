@@ -53,11 +53,17 @@ def parse_report(content: bytes, filename: str = '') -> dict:
         protocol = str(protocol or 'tcp').lower()
         if protocol not in ('tcp', 'udp', 'sctp'):
             raise ValueError(f'Неизвестный протокол: {protocol}')
-        if state and str(state).lower() not in ('open', 'открыт', 'открыто'):
+        state = str(state or 'open').lower()
+        if state == 'open|filtered':
+            if protocol != 'udp':
+                return
+        elif state not in ('open', 'открыт', 'открыто'):
             return
+        else:
+            state = 'open'
         key = (protocol, port)
         old = h['ports'].get(key, {})
-        h['ports'][key] = {'port': port, 'protocol': protocol, 'state': 'open',
+        h['ports'][key] = {'port': port, 'protocol': protocol, 'state': state,
                            'service': str(service)[:100] if service else old.get('service'),
                            'version': str(version)[:255] if version else old.get('version')}
         if banner is not None:
@@ -82,6 +88,8 @@ def parse_report(content: bytes, filename: str = '') -> dict:
             raise ValueError('Повреждённый XML') from exc
         if root.tag not in ('nmaprun', 'webscanner-scan'):
             raise ValueError('Поддерживается XML Nmap/Masscan и WebScanner')
+        from app.reports.nmap_states import expand_udp_states
+        expand_udp_states(root)
         source = root.get('scanner', 'nmap')
         elements = root.findall('host') if root.tag == 'nmaprun' else root.findall('hosts/host')
         for h in elements:

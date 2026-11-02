@@ -97,6 +97,12 @@ const PROFILES = [
   },
 ];
 
+const UDP_PROFILES = [
+  {value:'udp_quick', get label(){return t("Основные UDP");}, hint:'UDP', detail:'53,69,111,123,137,138,161,389,500,514,520,623,1434,1900,4500,5353', get info(){return t("Если ответа нет, результат отмечается как open|filtered: порт может быть открыт или фильтроваться.");}},
+  {value:'udp_top100', get label(){return t("Топ 100 UDP");}, hint:'UDP', get detail(){return t("100 популярных UDP-портов по nmap-services");}, get info(){return t("Если ответа нет, результат отмечается как open|filtered: порт может быть открыт или фильтроваться.");}},
+  {value:'udp_custom', get label(){return t("Свои UDP-порты");}, hint:'UDP', detail:'53,123,161', get info(){return t("Если ответа нет, результат отмечается как open|filtered: порт может быть открыт или фильтроваться.");}},
+];
+
 const SPEED_META: Record<string, { icon: string; tagline: string; info: string; color: string }> = {
   normal: {
     icon: '',
@@ -167,7 +173,9 @@ export default function ScanForm({ onCreated }: ScanFormProps) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(()=>{setLocked(loading);return()=>setLocked(false);},[loading]);
-  const isCustom = scanType === 'custom';
+  const isUdp = scanType.startsWith('udp_');
+  const profiles = isUdp ? UDP_PROFILES : PROFILES;
+  const isCustom = scanType === 'custom' || scanType === 'udp_custom';
   const customInvalid = isCustom && !/^[\d,\-]+$/.test(customPorts);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -210,15 +218,17 @@ export default function ScanForm({ onCreated }: ScanFormProps) {
       <label htmlFor="new-scan-source">{t("Источник скана")}<input id="new-scan-source" type="text" list="recent-scan-sources" value={sourceHost} onChange={e=>setSourceHost(e.target.value)} maxLength={253} disabled={loading} placeholder={t("IP хоста, с которого сканируем")} aria-describedby="new-scan-source-help" autoComplete="off"/></label>
       <datalist id="recent-scan-sources">{recentSources.map(value=><option key={value} value={value}/>)}</datalist>
       <label htmlFor="new-scan-target">{t("Цель")}<input id="new-scan-target" type="text" aria-label={t("Цель сканирования")} value={target} onChange={e=>setTarget(e.target.value)} placeholder={t("192.168.1.0/24 или example.com")} disabled={loading}/></label>
+      <label className="compact-scan-protocol">{t("Протокол")}<select aria-label={t("Протокол сканирования")} value={isUdp?'udp':'tcp'} onChange={e=>setScanType(e.target.value==='udp'?'udp_quick':'quick')} disabled={loading}><option value="tcp">TCP</option><option value="udp">UDP</option></select></label>
     </div>
     <div className="compact-scan-settings">
-      <label className="compact-port-field">{t("Порты")}<select aria-label={t("Профиль портов")} value={scanType} onChange={e=>setScanType(e.target.value)} disabled={loading}>{PROFILES.map(profile=><option key={profile.value} value={profile.value}>{profile.label}{portProfiles[profile.value]?.count?t(" · {v0} TCP-портов", {
+      <label className="compact-port-field">{t("Порты")}<select aria-label={t("Профиль портов")} value={scanType} onChange={e=>setScanType(e.target.value)} disabled={loading}>{profiles.map(profile=><option key={profile.value} value={profile.value}>{profile.label}{!isUdp&&portProfiles[profile.value]?.count?t(" · {v0} TCP-портов", {
   v0: portProfiles[profile.value].count
 }):` · ${profile.hint}`}</option>)}</select></label>
       <fieldset className="compact-speed-field"><legend>{t("Скорость")}</legend><div className="compact-speed-options">{(['normal','fast','hard'] as const).map(value=><button key={value} type="button" disabled={loading} aria-pressed={speed===value} onClick={()=>setSpeed(value)}>{speed===value&&<span aria-hidden="true">✓</span>}{speedLabel(value)}</button>)}</div></fieldset>
       <button type="submit" className="compact-scan-submit" disabled={loading||catalogLoading|| (!!project&&!part)||!target.trim()||(isCustom&&customInvalid)}>{loading?<Loader2 size={16} className="animate-spin"/>:<Play size={16}/>} {loading?t("Запуск…"):t("Сканировать")}</button>
     </div>
-    {isCustom&&<label className="compact-custom-ports">{t("Свои TCP-порты")}<input aria-label={t("Свои TCP-порты")} type="text" value={customPorts} onChange={e=>setCustomPorts(e.target.value)} placeholder="22,80,443,8000-8100" disabled={loading}/></label>}
+    {isCustom&&<label className="compact-custom-ports">{t(isUdp?"Свои UDP-порты":"Свои TCP-порты")}<input aria-label={t(isUdp?"Свои UDP-порты":"Свои TCP-порты")} type="text" value={customPorts} onChange={e=>setCustomPorts(e.target.value)} placeholder="22,80,443,8000-8100" disabled={loading}/></label>}
+    {isUdp&&<p className="compact-scan-help">{t("UDP-проверка может занять больше времени.")}</p>}
     <p id="new-scan-source-help" className="compact-scan-help">{t("Источник необязателен. Перед запуском через другую точку доступа проверьте его IP.")}</p>
     <div className="compact-scan-details">
       <details className="scan-dns-disclosure"><summary>{t("Имена компьютеров ·")} {resolveNames ? (dnsServer.trim() || t("Автоматически")) : t("Выключено")}</summary><div className="scan-dns-settings">
@@ -226,11 +236,11 @@ export default function ScanForm({ onCreated }: ScanFormProps) {
       {resolveNames&&<><label>{t("DNS-сервер")}<input aria-label={t("DNS-сервер нового скана")} value={dnsServer} onChange={event=>setDnsServer(event.target.value)} placeholder={t("Автоматически или IP сервера")} maxLength={45} disabled={loading}/></label><label>{t("Транспорт")}<select aria-label={t("Транспорт DNS нового скана")} value={dnsTransport} onChange={event=>setDnsTransport(event.target.value as DnsOptions['transport'])} disabled={loading}><option value="auto">{t("Авто: UDP → TCP")}</option><option value="tcp">{t("Только TCP")}</option><option value="udp">UDP</option></select></label><p>{t("Авто проверит сохранённый DNS части сети, найденные DNS-сервисы и системный DNS. До 60 секунд; получение имён можно повторить в карточке.")}</p></>}
     </div> </details>
 
-      <details><summary>{t("Подробнее о профиле и скорости")}</summary><div className="compact-profile-details">{(()=>{const profile=PROFILES.find(item=>item.value===scanType)!;const configured=portProfiles[scanType];return <><h3>{profile.label} · {speedLabel(speed)}</h3><p>{profile.info}</p><p className="font-mono break-all">{configured?.ports&&configured.ports!=='dynamic'?configured.ports:profile.detail}</p><p>{SPEED_META[speed]?.info}</p>{speedProfiles?.[speed]&&<p>{t("Ожидание ответа:")} {Number(speedProfiles[speed].rustscan.timeout)/1000} {t("с")}</p>}</>;})()}</div></details>
+      <details><summary>{t("Подробнее о профиле и скорости")}</summary><div className="compact-profile-details">{(()=>{const profile=profiles.find(item=>item.value===scanType)!;const configured=portProfiles[scanType];return <><h3>{profile.label} · {speedLabel(speed)}</h3><p>{profile.info}</p>{isUdp&&<p>{t("Ограничения UDP: до 256 адресов и 1000 портов за запуск, не более 30 минут.")}</p>}<p className="font-mono break-all">{configured?.ports&&configured.ports!=='dynamic'?configured.ports:profile.detail}</p><p>{SPEED_META[speed]?.info}</p>{!isUdp&&speedProfiles?.[speed]&&<p>{t("Ожидание ответа:")} {Number(speedProfiles[speed].rustscan.timeout)/1000} {t("с")}</p>}</>;})()}</div></details>
       <details className="compact-exclusions"><summary>{t("Исключения")}{excludeIps||excludeHosts||excludePorts?t(" · настроены"):''}</summary><div className="compact-profile-details"><p>{t("Исключить из сканирования. Адреса, имена и порты указывайте через запятую или с новой строки.")}</p><div className="compact-exclusion-grid">
         <label>{t("IP и сети")}<textarea aria-label={t("Исключённые IP и сети")} disabled={loading} value={excludeIps} onChange={e=>setExcludeIps(e.target.value)} maxLength={4000} placeholder="192.168.1.10, 192.168.1.64/28"/></label>
         <label>{t("Имена хостов")}<textarea aria-label={t("Исключённые хосты")} disabled={loading} value={excludeHosts} onChange={e=>setExcludeHosts(e.target.value)} maxLength={4000} placeholder="printer.office.local"/></label>
-        <label>{t("TCP-порты")}<textarea aria-label={t("Исключённые порты")} disabled={loading} value={excludePorts} onChange={e=>setExcludePorts(e.target.value)} maxLength={4000} placeholder="22, 9100, 8000-8100"/></label>
+        <label>{isUdp?"UDP-порты":t("TCP-порты")}<textarea aria-label={t("Исключённые порты")} disabled={loading} value={excludePorts} onChange={e=>setExcludePorts(e.target.value)} maxLength={4000} placeholder="22, 9100, 8000-8100"/></label>
       </div><p>{t("Исключения сохраняются для следующего запуска. Имена разрешаются через DNS перед сканом; если разрешить имя не удалось, запуск отменяется.")}</p></div></details>
     </div>
     {error&&<div role="alert" className="report-alert mt-3">{uiText(error)}</div>}

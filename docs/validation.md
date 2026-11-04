@@ -1,6 +1,6 @@
-# Validation of the GitHub source update
+# Repository validation
 
-Prepared on 2026-11-02 from the current working source. Runtime databases, real scan reports and screenshots, credentials, backups, local previews, dependency folders and Git history are excluded. The documentation gallery and demo project contain the existing synthetic examples.
+Checked on 2026-11-02. The repository root is now the single working source tree; see [the Git workflow](github.md). Runtime databases, real scan reports and screenshots, credentials, backups, local previews, dependency folders and Git history are excluded. The documentation gallery and demo project contain the existing synthetic examples.
 
 Checks run for this update:
 
@@ -9,9 +9,9 @@ Checks run for this update:
 - All frontend JavaScript logic and component fixtures in `frontend/tests/run.cjs`: passed.
 - TS/TSX and CSS syntax parsing: passed.
 - Documentation links, source/update archive contents, checksums and common credential patterns: checked during packaging.
-- Published Compose configuration is retained from the existing repository: `.env` password configuration and UI bound to localhost. It is validated with a placeholder password; no services are started.
+- Shared Compose uses `.env` password configuration and defaults to localhost binding. The ignored local dotenv and override preserve the existing Kali project, container names, database volume, network and port binding. Both configurations were validated without starting services.
 
-The package preserves the published frontend test/typecheck commands and their declared Babel dependencies. Local deployment-specific Compose settings are not copied into the public source folder. Existing source licensing is unchanged.
+The package preserves the published frontend test/typecheck commands and their declared Babel dependencies. Local deployment settings are excluded by `.gitignore`; archived source packages are not used for further development. Existing source licensing is unchanged.
 
 Not verified in this environment:
 

@@ -2,7 +2,8 @@ import { uiText, t, formatDateTime } from '../i18n/core';
 import { currentMapSvg, downloadFile, fullMapSvg } from '../utils/svgExport';
 import { useEffect, useLayoutEffect, useId, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Maximize2, Minimize2, ZoomIn, ZoomOut, RotateCcw, X } from 'lucide-react';
+import { copyText } from '../utils/clipboard';
+import { Maximize2, Minimize2, ZoomIn, ZoomOut, RotateCcw, X, Copy, Check } from 'lucide-react';
 import { buildObservationGraph } from '../utils/observedPaths';
 import type { ObservationData, ObservationRow, PathEdge } from '../utils/observedPaths';
 import { fitMapZoom, layoutNetworkMap, MAP_LEVEL_GAP } from '../utils/networkMapLayout';
@@ -27,6 +28,12 @@ export default function VisibilityMap({data,rows,source,setSource,onShowPath,map
   const sources=Array.from(graph.nodes.values()).filter(node=>node.isSource);
   const root=graph.reportSources.get(Number(source))||sources[0]?.id||'';
   const [exportError,setExportError]=useState('');
+  const [copyFeedback,setCopyFeedback]=useState<{ip:string;ok:boolean}|null>(null);
+  useEffect(()=>{
+    if(!copyFeedback)return;
+    const timer=window.setTimeout(()=>setCopyFeedback(null),2000);
+    return()=>window.clearTimeout(timer);
+  },[copyFeedback]);
   const [target,setTarget]=useState('');const [service,setService]=useState('');
   const [collapsed,setCollapsed]=useState<Set<string>>(()=>new Set());
   const [expanded,setExpanded]=useState(false);const [zoom,setZoom]=useState(1);
@@ -200,7 +207,12 @@ export default function VisibilityMap({data,rows,source,setSource,onShowPath,map
       </div>
       {chosen&&<aside className="service-visibility-panel" aria-label={reverse?t("Кто видит этот сервис?"):t("Сведения об устройстве")}>
         <button className="map-device-close" aria-label={t("Закрыть карточку устройства")} onClick={()=>{if(focused)showBranches();setTarget('');setService('');}}><X size={18}/></button>
-        <h3>{reverse?t("Кто видит этот сервис?"):t("Устройство")}</h3><p className="service-device-name">{chosen.label}</p><p className="text-xs text-gray-500">{chosen.network}</p>
+        <h3>{reverse?t("Кто видит этот сервис?"):t("Устройство")}</h3><div className="service-device-title"><p className="service-device-name">{chosen.label}</p>{chosen.ip&&<button type="button" className="map-copy-ip" title={t("Копировать IP")} aria-label={t("Копировать IP {v0}",{v0:chosen.ip})} onClick={async()=>{
+          const ip=chosen.ip!;
+          try {await copyText(ip);setCopyFeedback({ip,ok:true});}
+          catch {setCopyFeedback({ip,ok:false});}
+        }}>{copyFeedback!==null&&copyFeedback.ip===chosen.ip&&copyFeedback.ok?<Check size={16}/>:<Copy size={16}/>}</button>}</div>
+        {copyFeedback!==null&&copyFeedback.ip===chosen.ip&&<span className={`map-copy-feedback${copyFeedback.ok?'':' is-error'}`} role="status">{copyFeedback.ok?t("Скопировано"):t("Не удалось скопировать IP. Выделите адрес и скопируйте вручную.")}</span>}<p className="text-xs text-gray-500">{chosen.network}</p>
         {!reverse&&<>
           <div className="network-map-device-facts"><span>{t("Обнаружен из:")} {incoming.length} {t("точек")}</span><span>{t("Отчётов из хоста:")} {ownReports.length}</span><span>{t("Найдено из него:")} {graph.outgoing.get(target)?.length||0} {t("устройств")}</span></div>
           {!!ownReports.length&&<div className="network-map-own-reports"><h4>{t("Отчёты из этого хоста")}</h4>{ownReports.map(report=><Link key={report.id} to={`/scan/${report.id}`}>{t("Отчёт #")}{report.id} · {report.source_host}</Link>)}</div>}

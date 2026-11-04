@@ -1,6 +1,6 @@
 const fs=require('fs'),path=require('path'),vm=require('vm'),assert=require('node:assert/strict'),babel=require('@babel/core');
 const directory=path.join(__dirname,'../src');
-function load(file,extra=()=>{throw Error('Unexpected dependency');},globals={}){const code=babel.transformSync(fs.readFileSync(path.join(directory,file),'utf8'),{filename:file,presets:['@babel/preset-typescript'],plugins:['@babel/plugin-transform-react-jsx','@babel/plugin-transform-modules-commonjs']}).code;const box={exports:{},require:name=>name.includes('i18n/core')?require('./helpers/i18n.cjs'):extra(name),...globals};vm.runInNewContext(code,box);return box.exports;}
+function load(file,extra=()=>{throw Error('Unexpected dependency');},globals={}){const code=babel.transformSync(fs.readFileSync(path.join(directory,file),'utf8'),{filename:file,presets:['@babel/preset-typescript'],plugins:['@babel/plugin-transform-react-jsx','@babel/plugin-transform-modules-commonjs']}).code;const box={exports:{},require:name=>name.includes('i18n/core')?require('./helpers/i18n.cjs'):name.includes('clipboard')?load('utils/clipboard.ts'):extra(name),...globals};vm.runInNewContext(code,box);return box.exports;}
 const core=load('utils/observedPaths.ts'),layouts=load('utils/networkMapLayout.ts'),tools=load('utils/mapExploration.ts',()=>layouts);
 const id=ip=>JSON.stringify([1,ip]);
 const report=(n,source)=>({id:n,source_host:source,network:'HQ',network_part_id:1,observed_at:null,author:null});

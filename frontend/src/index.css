@@ -658,3 +658,11 @@ body { background: var(--page); }
 .compact-scan-protocol { width:104px; max-width:104px; }
 .scan-form-compact .compact-scan-protocol select { background:var(--subtle); color:var(--text); border:1px solid var(--border); border-radius:6px; }
 .scan-form-compact .compact-scan-protocol select:focus { outline:2px solid var(--selected); border-color:var(--accent); }
+
+.service-device-title { display:flex; align-items:center; gap:8px; min-width:0; }
+.service-device-title .service-device-name { margin:0; min-width:0; }
+.map-copy-ip { display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; width:28px; height:28px; border:1px solid var(--border); border-radius:5px; background:var(--surface); color:var(--muted); cursor:pointer; }
+.map-copy-ip:hover { color:var(--accent); border-color:var(--accent); }
+.map-copy-ip:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+.map-copy-feedback { font-size:11px; color:var(--success); }
+.map-copy-feedback.is-error { color:var(--danger); }

@@ -3,7 +3,7 @@ const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),asse
 const directory=path.join(__dirname,'../src');
 function load(name,requireExtra=()=>{throw Error('Unexpected dependency');},globals={}){
  const code=babel.transformSync(fs.readFileSync(path.join(directory,name),'utf8'),{filename:name,presets:['@babel/preset-typescript'],plugins:['@babel/plugin-transform-react-jsx','@babel/plugin-transform-modules-commonjs']}).code;
- const sandbox={exports:{},require:name=>name.includes('i18n/core')?require('./helpers/i18n.cjs'):requireExtra(name),...globals};vm.runInNewContext(code,sandbox);return sandbox.exports;
+ const sandbox={exports:{},require:name=>name.includes('i18n/core')?require('./helpers/i18n.cjs'):name.includes('clipboard')?load('utils/clipboard.ts'):requireExtra(name),...globals};vm.runInNewContext(code,sandbox);return sandbox.exports;
 }
 const core=load('utils/observedPaths.ts');const layoutTools=load('utils/networkMapLayout.ts');const {layoutNetworkMap:layout,fitMapZoom}=layoutTools;
 const exploration=load('utils/mapExploration.ts',name=>{if(name.includes('networkMapLayout'))return layoutTools;throw Error(name);});

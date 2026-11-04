@@ -2,7 +2,7 @@
 /scans/
 /backups/
 /release/
-/github-release/
+/github-release
 *.dump
 *.sql
 *.sqlite
@@ -39,3 +39,16 @@ core.[0-9]*
 Thumbs.db
 .idea/
 .vscode/
+
+# Local experiments and scan exports (never publish)
+/preview/
+/test_scan.*
+/cd
+/tatus --short
+
+# Machine-specific workspace and Compose overrides
+/.local/
+/docker-compose.override.yml
+/docker-compose.override.yaml
+/compose.override.yml
+/compose.override.yaml

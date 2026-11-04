@@ -138,6 +138,10 @@ flowchart LR
 
 Back up **PostgreSQL and `scans/` together**. `docker compose down -v` deletes the database volume. Keep an existing installation's Compose project name and database credentials when updating it.
 
+## Development workflow
+
+Use one Git working tree for code changes and pushes. Keep deployment settings in ignored `.env` / `docker-compose.override.yml`, and runtime data in ignored `scans/` / `backups/`. Run `bash scripts/check.sh` before committing. [Repository layout and Git workflow](docs/github.md).
+
 ## Documentation and development
 
 | Guide | Contents |

@@ -53,6 +53,8 @@ class Settings(BaseSettings):
 
     class Config:
         env_file = ".env"
+        # The repository dotenv also contains Compose-only deployment settings.
+        extra = "ignore"
         case_sensitive = True
 
 

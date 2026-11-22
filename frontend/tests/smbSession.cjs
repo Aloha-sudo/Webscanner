@@ -1,0 +1,17 @@
+const assert=require('node:assert/strict'),fs=require('fs'),vm=require('vm'),path=require('path'),babel=require('@babel/core');
+const code=babel.transformSync(fs.readFileSync(path.join(__dirname,'../src/utils/smbSession.ts'),'utf8'),{filename:'smbSession.ts',presets:['@babel/preset-typescript'],plugins:['@babel/plugin-transform-modules-commonjs']}).code;
+const stored=new Map();let clock=1700000000000;
+const sessionStorage={getItem:key=>stored.get(key)||null,setItem:(key,value)=>stored.set(key,value),removeItem:key=>stored.delete(key)};
+const create=()=>{const box={exports:{},window:{sessionStorage},Date:{now:()=>clock}};vm.runInNewContext(code,box);return box.exports;};
+let cache=create();const value={token:'a'.repeat(32),account:'LAB\\reader',expires_in:900,hosts:['192.0.2.1','192.0.2.2'],report_id:null,password:'must-not-be-stored',aes_key:'must-not-be-stored'};
+cache.saveSmbSession(140,value);assert(![...stored.values()][0].includes('must-not-be-stored'));
+cache=create();const restored=cache.readSmbSession(140);assert.equal(restored.token,value.token,'a new page/module can restore the capability');assert.equal(cache.readSmbSession(141),null,'scope is per scan');
+assert(cache.sessionApplies(restored,{id:'r',host:'192.0.2.2'}));assert(!cache.sessionApplies(restored,{id:'r',host:'192.0.2.99'}));
+assert(!cache.sessionApplies({...restored,report_id:'one'},{id:'two',host:'192.0.2.1'}));
+const expiry=restored.expires_at;clock+=300000;cache.saveSmbSession(140,restored);assert.equal(cache.readSmbSession(140).expires_at,expiry,'restoration cannot extend the server lease');
+clock+=600001;assert.equal(cache.readSmbSession(140),null);assert.equal(stored.size,0);
+cache.saveSmbSession(140,value);cache.clearSmbSession(140);assert.equal(cache.readSmbSession(140),null);
+console.log('PASS: tab-scoped SMB capability survives remount/reload, expires without extension, keeps scope and never stores passwords/hashes/keys');
+Object.defineProperty(sessionStorage,'getItem',{value:()=>{throw Error('storage blocked');},configurable:true});
+cache.saveSmbSession(140,value);assert.equal(cache.readSmbSession(140).token,value.token,'blocked storage keeps an in-memory fallback');
+console.log('PASS: blocked sessionStorage retains the current page connection in memory');

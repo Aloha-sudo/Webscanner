@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     APP_VERSION: str = "0.1.0"
     DEBUG: bool = True
     SCANS_DIR: str = "/scans"
+    SECRET_LOCAL_ROOT: str = "/data/secret-inputs"
     MASSCAN_RATE: int = 100
     RUSTSCAN_TIMEOUT: int = 900
     NMAP_TIMEOUT: int = 600

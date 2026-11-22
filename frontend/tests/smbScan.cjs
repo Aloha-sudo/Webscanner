@@ -1,0 +1,42 @@
+const assert=require('node:assert/strict');
+const {createHarness,text,get,tick}=require('./helpers/componentHarness.cjs');
+let current=null,body=null,refreshes=0,poll,connections=0,connected=null;
+const password={value:'private-password'};
+class FormData {constructor(form){this.values=form.values;}get(key){return this.values[key];}}
+const api={openSmbSession:async(scan,id,value)=>{connections++;assert.equal(id,'report-one');assert.equal(value.max_entries,10000);assert.equal(value.password,'visible-password');return {token:'connected',account:'LAB\\reader',expires_in:900};},getSmbJob:async()=>current,startSmbScan:async(id,value)=>{body=value;current={id:'job1',status:'queued',completed:0,report_ids:[],options:{targets:['192.0.2.1']}};return current;},cancelSmbScan:async()=>({...current,status:'cancelled'})};
+const form=createHarness('components/SmbScanForm.tsx',name=>{
+ if(name==='axios')return {__esModule:true,default:{isAxiosError:()=>false}};
+ if(name.includes('api/client'))return api;
+ throw Error(name);
+},{FormData,setInterval:fn=>{poll=fn;return 1;},clearInterval(){}});
+const props={scanId:1,defaultTargets:'192.0.2.0/24',onReports(){refreshes++;}};
+const render=()=>form.render(props);
+(async()=>{
+ let tree=render();form.effects();await tick();tree=render();assert.equal(get(tree,n=>n.type==='fieldset').props.disabled,false);
+ assert.equal(get(tree,n=>n.props.className==='smb-scan-setup').props.open,false);
+ get(tree,n=>n.props.className==='smb-scan-setup').props.onToggle({currentTarget:{open:true}});tree=render();
+ assert.equal(get(tree,n=>n.props.className==='smb-scan-setup').props.open,true);
+ const targetField=get(tree,n=>n.props.name==='targets').props.ref;targetField.current={value:'old'};props.targetRequest={targets:'192.0.2.5, 192.0.2.6',nonce:1,collectFiles:true};tree=render();form.effects();tree=render();assert.equal(targetField.current.value,'192.0.2.5, 192.0.2.6');assert.equal(get(tree,n=>n.props.className==='smb-scan-setup').props.open,true);
+ assert.equal(get(tree,n=>n.props.name==='spider').props.checked,true);get(tree,n=>n.props.name==='spider').props.onChange({target:{checked:false}});tree=render();
+ get(tree,n=>n.type==='select'&&n.props.value==='anonymous').props.onChange({target:{value:'password'}});tree=render();assert.equal(get(tree,n=>n.props.name==='password').props.type,'text','SMB password stays visible as requested');
+ await get(tree,n=>n.type==='form').props.onSubmit({preventDefault(){},currentTarget:{values:{targets:'192.0.2.1',username:'reader',domain:'LAB',password:'private-password',spider:'on',depth:'3',max_entries:'100',include_admin:undefined},elements:{namedItem:()=>password}}});
+ tree=render();assert.equal(get(tree,n=>n.props.className==='smb-scan-setup').props.open,false,'successful launch collapses setup while job controls remain outside');assert.equal(body.password,'private-password');assert.equal(body.spider,false);assert.equal(body.include_admin,false);assert.equal(password.value,'');assert.equal(get(tree,n=>n.type==='fieldset').props.disabled,true);
+ current={...current,status:'running',completed:1,report_ids:['report1'],current_host:'192.0.2.1'};await poll();tree=render();assert.equal(refreshes,1);assert.match(text(tree),/192.0.2.1/);
+ await poll();assert.equal(refreshes,1,'unchanged report list does not trigger unnecessary reloads');
+ await get(tree,n=>n.type==='button'&&text(n)==='Остановить SMB').props.onClick();tree=render();assert.match(text(tree),/Отменено/);assert.equal(get(tree,n=>n.type==='fieldset').props.disabled,false);
+ get(tree,n=>n.type==='select'&&n.props.value==='password').props.onChange({target:{value:'ntlm'}});tree=render();assert(get(tree,n=>n.props.name==='nt_hash'));
+ await get(tree,n=>n.type==='form').props.onSubmit({preventDefault(){},currentTarget:{values:{targets:'192.0.2.1',username:'reader',domain:'LAB',nt_hash:'1'.repeat(32),password:'must-not-be-sent',depth:'3',max_entries:'100'},elements:{namedItem:()=>password}}});assert.equal(body.credential_type,'ntlm');assert.equal(body.nt_hash,'1'.repeat(32));assert.equal(body.password,'');
+ current={...current,status:'completed'};await poll();tree=render();get(tree,n=>n.type==='select'&&n.props.value==='ntlm').props.onChange({target:{value:'kerberos'}});tree=render();assert(get(tree,n=>n.props.name==='aes_key'));assert(get(tree,n=>n.props.name==='kdc_host'));
+ await get(tree,n=>n.type==='form').props.onSubmit({preventDefault(){},currentTarget:{values:{targets:'192.0.2.1',username:'reader',domain:'lab.example',aes_key:'b'.repeat(64),kdc_host:'192.0.2.10',server_names:'192.0.2.1=fs01.lab.example',nt_hash:'must-not-be-sent',password:'must-not-be-sent',depth:'3',max_entries:'100'},elements:{namedItem:()=>password}}});assert.equal(body.credential_type,'kerberos');assert.equal(body.aes_key,'b'.repeat(64));assert.equal(body.server_names['192.0.2.1'],'fs01.lab.example');assert.equal(body.password,'');assert.equal(body.nt_hash,'');
+ current={...current,status:'completed'};await poll();
+ props.onSession=value=>connected=value;props.connectionRequest={report:{id:'report-one',host:'192.0.2.1',account:'LAB\\reader',auth_method:'password'},nonce:1};tree=render();form.effects();tree=render();
+ assert.equal(get(tree,n=>n.props.name==='targets').props.readOnly,true);assert.equal(targetField.current.value,'192.0.2.1');
+ assert.equal(get(tree,n=>n.props.name==='password').props.type,'text');
+ assert(!text(tree).includes('Дополнительные настройки'),'connection-only form has no scan options');
+ await get(tree,n=>n.type==='form').props.onSubmit({preventDefault(){},currentTarget:{values:{targets:'192.0.2.1',username:'reader',domain:'LAB',password:'visible-password'},elements:{namedItem:()=>password}}});
+ assert.equal(connections,1);assert.equal(connected.token,'connected');assert.equal(password.value,'');
+ console.log('PASS: one central connection form reuses credentials across file browsing, clears secret input and keeps valid defaults without scan fields');
+ console.log('PASS: Kerberos AES mode, KDC/SPN options and exclusion of password/hash');
+ console.log('PASS: NTLM hash mode and password exclusion');
+ console.log('PASS: active SMB credentials/null form, secret clearing, options, worker progress refresh and cancellation');
+})().catch(error=>{console.error(error);process.exitCode=1;});

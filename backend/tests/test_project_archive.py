@@ -48,6 +48,22 @@ class ProjectArchiveTests(unittest.TestCase):
         self.assertEqual(s.screenshots[0].minio_path,f'local://scan_{s.id}/test.png')
         self.assertEqual((self.root/str(s.id)/'screenshots/test.png').read_bytes(),b'image')
         self.assertEqual((self.root/str(s.id)/'original.xml').read_text(),'<nmaprun/>')
+    def test_smb_catalog_and_original_survive_project_roundtrip(self):
+        from app.reports import smb
+        metadata = {'host': '192.0.2.1', 'account': 'LAB\\reader', 'source': None,
+                    'author': 'Tester', 'observed_at': None, 'filename': 'host.json'}
+        data = {'Docs': {'HR/note.txt': {'size': '1 KB', 'ctime_epoch': 'unknown',
+                'mtime_epoch': 'unknown', 'atime_epoch': 'unknown'}}}
+        content = json.dumps(data).encode()
+        report = smb.import_report(self.root, self.scan.id, content, metadata)
+        payload, files = read_archive(self.archive())
+        new = import_project(self.db, payload, files, self.root, 'SMB copy')
+        scan = self.db.query(Scan).filter_by(project_id=new).one()
+        self.assertEqual(smb.list_reports(self.root, scan.id), [report])
+        self.assertEqual(smb.browse(self.root, scan.id, report['id'], 'Docs', 'HR')['total'], 1)
+        original = smb.report_dir(self.root, scan.id, report['id']) / 'original.json'
+        self.assertEqual(original.read_bytes(), content)
+
     def test_legacy_connection_metadata_survives_project_roundtrip(self):
         self.scan.proxy_options={'host':'192.0.2.10','port':1080,'version':'socks5'}
         self.db.commit()
@@ -113,3 +129,25 @@ class ProjectArchiveTests(unittest.TestCase):
     def test_symlink_export_rejected(self):
         (self.root/str(self.scan.id)/'link').symlink_to('/etc/hosts')
         with self.assertRaises(ValueError):self.archive()
+    def test_secret_results_are_excluded_from_project_archives(self):
+        from app.secrets import store
+        token='a'*32;path=store.directory(self.root,self.scan.id,token)
+        store.write(path,{'id':token,'status':'completed','created_at':store.now(),'updated_at':store.now(),'choices':[],'findings':[]})
+        (path/'content.bin').write_bytes(b'private fixture document')
+        with zipfile.ZipFile(io.BytesIO(self.archive())) as archive:
+            self.assertFalse(any('secret-jobs' in name for name in archive.namelist()))
+    def test_active_secret_scan_blocks_project_export(self):
+        from app.secrets import store
+        path=store.directory(self.root,self.scan.id,'a'*32)
+        store.write(path,{'id':'a'*32,'status':'running','created_at':store.now(),'updated_at':store.now(),'choices':[]})
+        with self.assertRaisesRegex(ValueError,'поиск секретов'):self.archive()
+    def test_secret_job_manifests_cannot_be_imported(self):
+        import hashlib
+        with zipfile.ZipFile(io.BytesIO(self.archive())) as archive:
+            files={name:archive.read(name) for name in archive.namelist() if name!='manifest.json'}
+        files[f'files/{self.scan.id}/secret-jobs/'+('a'*32)+'/state.json']=b'{}'
+        output=io.BytesIO()
+        with zipfile.ZipFile(output,'w') as archive:
+            for name,content in files.items():archive.writestr(name,content)
+            archive.writestr('manifest.json',json.dumps({'format':'webscanner-project','version':1,'sha256':{name:hashlib.sha256(content).hexdigest() for name,content in files.items()}}))
+        with self.assertRaisesRegex(ValueError,'поиска секретов'):read_archive(output.getvalue())

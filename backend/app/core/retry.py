@@ -3,6 +3,7 @@ from app.schemas.scan import ScanCreate
 
 
 def retry_payload(scan, overrides=None):
+    if getattr(scan,'scan_type',None)=='smb_workspace':raise ValueError('Повторите эту проверку в разделе «Поиск секретов»')
     if getattr(scan, 'proxy_options', None):
         raise ValueError('Сканирование через прокси удалено. Импортируйте готовый отчёт.')
     fields = ('target', 'scan_type', 'ports', 'comment', 'speed',

@@ -43,6 +43,7 @@ class Scan(Base):
     retry_of_id = Column(Integer, nullable=True, index=True)
     # Historical metadata only; retained for existing reports and project archives.
     proxy_options = Column(JSON, nullable=True)
+    smb_job = Column(JSON, nullable=True)
     target = Column(String(255), nullable=False, index=True)
     scan_type = Column(String(50), default="quick")
     ports = Column(String(500), nullable=True)   # для custom-профиля

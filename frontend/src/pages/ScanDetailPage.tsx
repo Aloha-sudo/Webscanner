@@ -8,6 +8,7 @@ import { getScan, updateScanComment } from '../api/client';
 import type { ScanDetail } from '../types';
 import ScanHosts from '../components/ScanHosts';
 import DnsResults from '../components/DnsResults';
+import SmbBrowser from '../components/SmbBrowser';
 import ScreenshotGallery from '../components/ScreenshotGallery';
 import {
   ArrowLeft, Loader2, Server, Globe, Camera, AlertCircle,
@@ -28,7 +29,7 @@ export default function ScanDetailPage() {
   const [savingSource, setSavingSource] = useState(false);
   const [sourceError, setSourceError] = useState('');
   const [sourceOpen,setSourceOpen]=useState(false);
-  const [resultView,setResultView]=useState<'hosts'|'screenshots'>('hosts');
+  const [resultView,setResultView]=useState<'hosts'|'screenshots'|'smb'>(()=>typeof window!=='undefined'&&window.location?.search?.includes('view=smb')?'smb':'hosts');
   const [recovering, setRecovering] = useState(false);
   const [recoveryMessage, setRecoveryMessage] = useState('');
   const [loading, setLoading] = useState(true);
@@ -51,7 +52,7 @@ export default function ScanDetailPage() {
   };
 
   useEffect(() => {
-    setSourceOpen(false);setEditing(false);setResultView('hosts');fetchScan();
+    setSourceOpen(false);setEditing(false);setResultView(typeof window!=='undefined'&&window.location?.search?.includes('view=smb')?'smb':'hosts');fetchScan();
   }, [id]);
 
   useEffect(() => {
@@ -266,9 +267,12 @@ export default function ScanDetailPage() {
       </div>}
       <div className="scan-result-tabs" role="tablist" aria-label={t("Результаты скана")} onKeyDown={event=>{
         if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
-        event.preventDefault();const next=event.key==='Home'?'hosts':event.key==='End'?'screenshots':resultView==='hosts'?'screenshots':'hosts';
-        setResultView(next);event.currentTarget.querySelectorAll<HTMLButtonElement>('button')[next==='hosts'?0:1]?.focus();
-      }}><button role="tab" tabIndex={resultView==='hosts'?0:-1} id="scan-hosts-tab" aria-selected={resultView==='hosts'} aria-controls="scan-hosts-panel" onClick={()=>setResultView('hosts')}><Server size={15}/>{t("Хосты и сервисы (")}{scan.total_hosts})</button><button role="tab" tabIndex={resultView==='screenshots'?0:-1} id="scan-screenshots-tab" aria-selected={resultView==='screenshots'} aria-controls="scan-screenshots-panel" onClick={()=>setResultView('screenshots')}><Camera size={15}/>{t("Скриншоты (")}{scan.total_screenshots})</button></div>
+        event.preventDefault();
+        const tabs = ['hosts', 'screenshots', 'smb'] as const;
+        const index = event.key==='Home' ? 0 : event.key==='End' ? tabs.length-1 : (tabs.indexOf(resultView)+(event.key==='ArrowRight'?1:-1)+tabs.length)%tabs.length;
+        setResultView(tabs[index]);event.currentTarget.querySelectorAll<HTMLButtonElement>('button')[index]?.focus();
+      }}><button role="tab" tabIndex={resultView==='hosts'?0:-1} id="scan-hosts-tab" aria-selected={resultView==='hosts'} aria-controls="scan-hosts-panel" onClick={()=>setResultView('hosts')}><Server size={15}/>{t("Хосты и сервисы (")}{scan.total_hosts})</button><button role="tab" tabIndex={resultView==='screenshots'?0:-1} id="scan-screenshots-tab" aria-selected={resultView==='screenshots'} aria-controls="scan-screenshots-panel" onClick={()=>setResultView('screenshots')}><Camera size={15}/>{t("Скриншоты (")}{scan.total_screenshots})</button><button role="tab" tabIndex={resultView==='smb'?0:-1} id="scan-smb-tab" aria-selected={resultView==='smb'} aria-controls="scan-smb-panel" onClick={()=>setResultView('smb')}>SMB</button></div>
+      {resultView==='smb'&&<section id="scan-smb-panel" role="tabpanel" aria-labelledby="scan-smb-tab"><SmbBrowser key={scan.id} scan={scan}/></section>}
       {/* Hosts */}
       {resultView==='hosts'&&<section id="scan-hosts-panel" role="tabpanel" aria-labelledby="scan-hosts-tab">
       {scan.hosts.length > 0 && (

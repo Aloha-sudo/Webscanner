@@ -5,7 +5,7 @@ celery_app = Celery(
     "scanner",
     broker=settings.REDIS_URL,
     backend=settings.REDIS_URL,
-    include=["app.tasks.scan_tasks"],
+    include=["app.tasks.scan_tasks", "app.core.smb_jobs", "app.core.smb_actions", "app.core.secret_jobs", "app.core.secret_workflow"],
 )
 
 celery_app.conf.update(

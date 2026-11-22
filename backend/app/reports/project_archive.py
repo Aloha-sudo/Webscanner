@@ -34,8 +34,10 @@ def export_project(db, project_id, root):
         selectinload(Scan.hosts).selectinload(Host.ports).selectinload(Port.service_obj),
         selectinload(Scan.screenshots),
     ).filter_by(project_id=project_id).order_by(Scan.id).all()
-    if any(s.status in ('queued', 'running') or s.dns_status in ('queued', 'running') for s in scans):
-        raise ValueError('Дождитесь завершения сканов и DNS-задач')
+    if any(s.status in ('queued', 'running') or s.dns_status in ('queued', 'running') or (s.smb_job or {}).get('status') in ('queued', 'running') for s in scans):
+        raise ValueError('Дождитесь завершения сканов, DNS- и SMB-задач')
+    from app.secrets.store import active
+    if any(active(root,scan.id) for scan in scans):raise ValueError('Сначала остановите поиск секретов')
     parts = db.query(NetworkPart).filter_by(project_id=project_id).all()
     hosts = [h for s in scans for h in s.hosts]
     ports = [p for h in hosts for p in h.ports]
@@ -57,6 +59,7 @@ def export_project(db, project_id, root):
             if directory.is_symlink(): raise ValueError('Символические ссылки не поддерживаются')
             if directory.exists():
                 for path in directory.rglob('*'):
+                    if path.relative_to(directory).parts[0]=='secret-jobs':continue
                     if path.is_symlink(): raise ValueError('Символические ссылки не поддерживаются')
                     if path.is_file():
                         if path.stat().st_size > MAX_BYTES - total: raise ValueError('Проект превышает лимит 512 МБ')
@@ -85,6 +88,7 @@ def read_archive(content):
                 raise ValueError('Превышены лимиты архива или повторяются имена файлов')
             for info in infos:
                 path = PurePosixPath(info.filename)
+                if len(path.parts)>2 and path.parts[0]=='files' and path.parts[2]=='secret-jobs':raise ValueError('Архив содержит локальные результаты поиска секретов')
                 if path.is_absolute() or '..' in path.parts or '\\' in info.filename or path.as_posix() != info.filename or info.is_dir() or (info.external_attr >> 16) & 0o170000 == 0o120000:
                     raise ValueError('Недопустимый путь в архиве')
             files = {name: archive.read(name) for name in names}
@@ -128,7 +132,7 @@ def read_archive(content):
                 ids[model].add(row['id'])
                 for field, parent in RELATIONS.get(model, {}).items():
                     if row.get(field) is not None and row[field] not in ids[parent]: raise ValueError('Нарушены связи проекта')
-                if model is Scan and (row.get('status') not in ('completed','failed','cancelled') or row.get('dns_status') in ('queued','running')): raise ValueError('Архив содержит активные задачи')
+                if model is Scan and (row.get('status') not in ('completed','failed','cancelled') or row.get('dns_status') in ('queued','running') or (row.get('smb_job') or {}).get('status') in ('queued','running')): raise ValueError('Архив содержит активные задачи')
         part_projects = {p['id']: p['project_id'] for p in payload['network_parts']}
         for scan in payload['scans']:
             if scan.get('network_part_id') is not None and part_projects[scan['network_part_id']] != scan['project_id']: raise ValueError('Часть сети вне проекта')

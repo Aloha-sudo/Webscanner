@@ -10,11 +10,11 @@ function createHarness(filename,dependencies,globals={}){
  useState(initial){const i=cursor++;if(!(i in slots))slots[i]=typeof initial==='function'?initial():initial;return [slots[i],v=>slots[i]=typeof v==='function'?v(slots[i]):v];},
  useRef(initial){const i=cursor++;if(!(i in slots))slots[i]={current:initial};return slots[i];},
  useId:()=>':test-dialog:',
- useEffect(callback,deps){const i=cursor++;const previous=slots[i];if(!previous||deps.some((d,j)=>!Object.is(d,previous.deps[j])))pending.push(()=>{previous?.cleanup?.();slots[i]={deps,cleanup:callback()};});}
+ useEffect(callback,deps){const i=cursor++;const previous=slots[i];if(!previous||deps.some((d,j)=>!Object.is(d,previous.deps[j])))pending.push(()=>{previous?.cleanup?.();slots[i]={deps,callback,cleanup:callback()};});}
  };
  const code=babel.transformSync(fs.readFileSync(path.join(base,filename),'utf8'),{filename,presets:['@babel/preset-typescript'],plugins:['@babel/plugin-transform-react-jsx','@babel/plugin-transform-modules-commonjs']}).code;
  const sandbox={exports:{},React,console,...globals,require(name){if(name.includes('i18n/core'))return require('./i18n.cjs');if(name==='react')return hooks;if(name==='lucide-react')return new Proxy({},{get:(_,key)=>String(key)});return dependencies(name);}};
  vm.runInNewContext(code,sandbox);
- return {render(props={}){cursor=0;return sandbox.exports.default(props);},effects(){const jobs=pending;pending=[];jobs.forEach(fn=>fn());}};
+ return {render(props={}){cursor=0;return sandbox.exports.default(props);},effects(){const jobs=pending;pending=[];jobs.forEach(fn=>fn());},unmount(){slots.forEach(slot=>slot?.cleanup?.());pending=[];},replayEffects(){slots.forEach(slot=>{if(slot?.callback){slot.cleanup?.();slot.cleanup=slot.callback();}});}};
 }
 module.exports={createHarness,elements,text,get,tick:()=>new Promise(resolve=>setImmediate(resolve))};

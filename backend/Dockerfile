@@ -23,7 +23,12 @@ COPY --from=rustscan-builder /usr/local/bin/rustscan /usr/local/bin/rustscan
 # === PIP requirements (ДО httpx!) ===
 WORKDIR /app
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY app/core/queue_dependencies.py /tmp/check_queue_dependencies.py
+COPY app/secrets/check_engine.py /tmp/check_secret_engine.py
+RUN pip install --no-cache-dir -r requirements.txt \
+    && pip check \
+    && python /tmp/check_queue_dependencies.py \
+    && python /tmp/check_secret_engine.py
 
 # === GOWITNESS ===
 RUN wget -q https://github.com/sensepost/gowitness/releases/download/3.0.5/gowitness-3.0.5-linux-amd64 -O /usr/local/bin/gowitness && \
@@ -37,5 +42,6 @@ RUN wget -q https://github.com/projectdiscovery/httpx/releases/download/v1.6.0/h
     rm -rf /tmp/httpx*
 
 COPY . .
+RUN python -m app.secrets.check_native
 EXPOSE 8000
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

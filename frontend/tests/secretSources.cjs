@@ -1,0 +1,12 @@
+const assert=require('node:assert/strict'),fs=require('fs'),vm=require('vm'),babel=require('@babel/core');
+const calls=[];const api={post:async(path,body,options)=>{calls.push({path,body,options});return {data:{job:{id:'fixture'},session:{token:'capability'}}};}};
+const code=babel.transformSync(fs.readFileSync(require('path').join(__dirname,'../src/api/client.ts'),'utf8'),{filename:'client.ts',presets:['@babel/preset-typescript'],plugins:['@babel/plugin-transform-modules-commonjs']}).code;
+const sandbox={exports:{},require:name=>name==='axios'?{__esModule:true,default:{create:()=>api}}:{installLocaleInterceptors(){}}};vm.runInNewContext(code,sandbox);
+const client=sandbox.exports,options={targets:'ftp://192.0.2.1:2121/docs',mode:'credentials',username:'reader',password:'FICTIONAL_FTP_PASSWORD',domain:'SHOULD_NOT_BE_SENT',nt_hash:'SHOULD_NOT_BE_SENT',aes_key:'SHOULD_NOT_BE_SENT'};
+(async()=>{
+ await client.searchSecrets(options,true,undefined,['Docs'],'ftp',true);let call=calls.pop();assert.equal(call.path,'/secrets/search');assert.equal(call.body.source,'ftp');assert.equal(call.body.ftp_tls,true);assert.equal(call.body.ftp_password,'FICTIONAL_FTP_PASSWORD');assert.equal(call.body.locations[0],options.targets);assert(!('options' in call.body));assert.equal(call.body.share_names.length,0);assert(!JSON.stringify(call.body).includes('SHOULD_NOT_BE_SENT'));
+ await client.searchSecrets({...options,targets:'client backup\nother'},false,undefined,[],'local');call=calls.pop();assert.equal(call.body.source,'local');assert.equal(call.body.locations[0],'client backup');assert(!JSON.stringify(call.body).includes('FICTIONAL_FTP_PASSWORD'));assert(!JSON.stringify(call.body).includes('SHOULD_NOT_BE_SENT'));
+ await client.searchSecrets(options,false,undefined,[], 'smb',false,{max_depth:0,time_limit:14400,max_file_mb:32,read_mb:8,total_read_mb:512,max_reads:100,threads:12,share_names:['C$'],exclude_paths:['*/Temp']});call=calls.pop();assert.equal(call.body.max_depth,0);assert.equal(call.body.time_limit,14400);assert.equal(call.body.total_read_mb,512);assert.equal(call.body.share_names[0],'C$');assert.equal(call.body.exclude_paths[0],'*/Temp');
+ await client.connectSecretSource(7,'job',options,'ftp',false);assert.equal(calls.pop().path,'/scans/7/secrets/job/connection');
+ console.log('PASS: source-specific requests, FTP/FTPS credentials, local paths and scoped reconnection without unused SMB secrets');
+})().catch(e=>{console.error(e);process.exitCode=1;});

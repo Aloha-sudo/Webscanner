@@ -10,6 +10,8 @@ Scan from different hosts, combine the results into a project, and explore which
 
 *Actual WebScanner interface in dark mode. Browser captures use synthetic API fixtures; no real organization data is shown.*
 
+**SMB inventory:** scan IPs/subnets anonymously or with a Windows password, NTLM hash or Kerberos AES key. View accessible shares across hosts in one table, browse live folders, preview/download files and inspect effective access; optional NetExec JSON import. [SMB guide and synthetic example](docs/smb.md).
+
 <!-- WEBSCANNER_GALLERY_START -->
 ## Interface gallery
 
@@ -174,3 +176,9 @@ Python 3.11+ and Node.js 20+. A local Vite process outside Compose needs its API
 ## License
 
 An application source license has not been selected yet. [Third-party notices](THIRD_PARTY_NOTICES.md) cover bundled fonts and installed dependencies.
+
+SMB uses a single workbench: hosts/shares stay on the left, file browsing and saved-file search on the right. One top-level identity form serves the whole view; access checks and file-list collection reuse its active session. Preview appears below the file list, share locations and search results are retained while navigating. History, selected-result deletion and import are under ⋯. [Workflow, formats and limits](docs/smb.md).
+
+**Secret search:** choose SMB, FTP/FTPS or a local server folder and start the full snaffler-ng runner in one click. Automatic share/file discovery, readable file rows with icons, paths and review priorities, on-demand preview/download with inline connection errors, cancellation and history. [Usage and deployment](docs/secrets.md).
+
+Secret search needs no project or prior port scan. Collapsed settings expose depth, runtime, file/read sizes, aggregate read budgets, threads and exclusions. Fast/normal modes use native traversal; finding search covers every saved page (`id_rsa`, `*.ppk`).

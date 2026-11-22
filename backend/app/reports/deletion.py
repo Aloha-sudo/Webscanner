@@ -3,17 +3,20 @@ def validate_project_deletion(scans, expected_count):
         raise ValueError('Проект не найден или в нём нет отчётов')
     if len(scans) != expected_count:
         raise ValueError('Состав проекта изменился. Обновите список и подтвердите удаление снова')
-    if any(getattr(s.status, 'value', s.status) in ('running', 'queued') for s in scans):
+    if any(getattr(s.status, 'value', s.status) in ('running', 'queued') or (getattr(s, 'smb_job', None) or {}).get('status') in ('running', 'queued') for s in scans):
         raise ValueError('В проекте есть активные сканы. Сначала остановите их')
     return [s.id for s in scans]
 
 
-def remove_project_records(db, project, part_model, scan_model, expected_count, delete_reports=False):
+def remove_project_records(db, project, part_model, scan_model, expected_count, delete_reports=False, root=None):
     scans=db.query(scan_model).filter(scan_model.project_id==project.id).with_for_update().all()
     if len(scans)!=expected_count:
         raise ValueError('Количество отчётов изменилось. Обновите каталог')
-    if any(getattr(s.status,'value',s.status) in ('running','queued') for s in scans):
+    if any(getattr(s.status,'value',s.status) in ('running','queued') or (getattr(s, 'smb_job', None) or {}).get('status') in ('running','queued') for s in scans):
         raise ValueError('Сначала остановите активные сканы')
+    if root is not None:
+        from app.secrets.store import active
+        if any(active(root,scan.id) for scan in scans):raise ValueError('Сначала остановите поиск секретов')
     ids=[s.id for s in scans]
     for scan in scans:
         if delete_reports:

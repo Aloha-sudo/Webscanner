@@ -22,6 +22,7 @@ export function formatDuration(seconds: number | null | undefined): string {
  */
 export function profileLabel(scan: { scan_type: string; ports?: string | null }): string {
   switch (scan.scan_type) {
+    case 'smb_workspace': return t('Проверка SMB');
     case 'udp_quick': return t("Основные UDP");
     case 'udp_top100': return t("Топ 100 UDP");
     case 'udp_custom': return t("Свои UDP-порты");

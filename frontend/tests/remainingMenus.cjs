@@ -48,12 +48,15 @@ const map=createHarness('pages/TeamPage.tsx',name=>{
   if(name.includes('api/client'))return {getScan:async()=>record,updateScanComment:async(id,comment)=>{commentBody=comment;return {...record,comment};}};
   if(name==='axios')return {__esModule:true,default:{patch:async(url,body)=>{patchBody=body;return {data:{...body,project:'Lab',network:'Office'}};}}};
   if(name.includes('utils/format'))return {stageLabel:v=>v,speedLabel:()=> 'Обычная',profileLabel:()=> 'Быстрый',formatDuration:()=> '1 мин'};
-  if(name.includes('DnsResults'))return {__esModule:true,default:'DnsResults'};if(name.includes('ScanHosts'))return {__esModule:true,default:'ScanHosts'};if(name.includes('ScreenshotGallery'))return {__esModule:true,default:'ScreenshotGallery'};throw Error(name);
+  if(name.includes('SmbBrowser'))return {__esModule:true,default:'SmbBrowser'};if(name.includes('DnsResults'))return {__esModule:true,default:'DnsResults'};if(name.includes('ScanHosts'))return {__esModule:true,default:'ScanHosts'};if(name.includes('ScreenshotGallery'))return {__esModule:true,default:'ScreenshotGallery'};throw Error(name);
  },{document,FormData});
  tree=detail.render();detail.effects();await tick();tree=detail.render();detail.effects();assert(text(tree).includes('Источник: 10.0.0.30'));assert(elements(tree).some(n=>n.type==='ScanHosts'));assert.equal(get(tree,n=>n.type==='ScanHosts').props.tools.type,'DnsResults','DNS controls belong to the host filter toolbar');assert(!text(tree).includes('Нет комментария'));
  get(tree,n=>n.type==='button'&&text(n).includes('Добавить комментарий')).props.onClick();tree=detail.render();get(tree,n=>n.type==='textarea').props.onChange({target:{value:'Team note'}});tree=detail.render();await get(tree,n=>n.type==='button'&&text(n)==='Сохранить').props.onClick();tree=detail.render();assert.equal(commentBody,'Team note');assert.match(text(tree),/Team note/);
  get(tree,n=>n.type==='button'&&text(n)==='Изменить привязку').props.onClick();tree=detail.render();await get(tree,n=>n.type==='form').props.onSubmit({preventDefault(){},currentTarget:{project_id:'7',network_part_id:'8',source_host:'10.0.0.40',author:'Alex'}});tree=detail.render();assert.equal(patchBody.source_host,'10.0.0.40');assert.equal(patchBody.project_id,7);assert(!elements(tree).some(n=>n.type==='form'));
  get(tree,n=>n.props.role==='tab'&&text(n).includes('Скриншоты')).props.onClick();tree=detail.render();assert(elements(tree).some(n=>n.type==='ScreenshotGallery'));assert(!elements(tree).some(n=>n.type==='ScanHosts'));
+ get(tree,n=>n.props.role==='tab'&&text(n)==='SMB').props.onClick();tree=detail.render();assert.equal(get(tree,n=>n.type==='SmbBrowser').props.scan.id,99);assert(!elements(tree).some(n=>n.type==='ScreenshotGallery'));
+ const focused=[];get(tree,n=>n.props.role==='tablist').props.onKeyDown({key:'ArrowRight',preventDefault(){},currentTarget:{querySelectorAll:()=>[0,1,2].map(i=>({focus(){focused.push(i);}}))}});tree=detail.render();assert(elements(tree).some(n=>n.type==='ScanHosts'));assert.deepEqual(focused,[0]);
+ console.log('PASS: SMB tab and keyboard wraparound');
  console.log('PASS: scan project/source visibility, comment editing, source reassignment and screenshot tab');
 })().catch(error=>{console.error(error);process.exitCode=1;});
 // Native dialog: keep focus/escape behavior native and block closing during an operation.

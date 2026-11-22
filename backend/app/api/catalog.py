@@ -129,7 +129,8 @@ def merge_part(id:int,payload:MergeParts,db:Session=Depends(get_db)):
 def project_summary(id:int,db:Session=Depends(get_db)):
     project=require(db,Project,id)
     scans=db.query(Scan).filter(Scan.project_id==id).all()
-    return {'project':project.name,'report_count':len(scans),'networks':[n.name for n in db.query(NetworkPart).filter(NetworkPart.project_id==id)],'active_count':sum(s.status in (ScanStatus.RUNNING,ScanStatus.QUEUED) for s in scans)}
+    from app.secrets.store import active
+    return {'project':project.name,'report_count':len(scans),'networks':[n.name for n in db.query(NetworkPart).filter(NetworkPart.project_id==id)],'active_count':sum(s.status in (ScanStatus.RUNNING,ScanStatus.QUEUED) or (s.smb_job or {}).get('status') in ('queued','running') or active(settings.SCANS_DIR,s.id) for s in scans)}
 
 
 class DeleteProject(BaseModel):
@@ -141,8 +142,10 @@ class DeleteProject(BaseModel):
 def delete_project(id:int,payload:DeleteProject,db:Session=Depends(get_db)):
     project=require(db,Project,id)
     from app.reports.deletion import remove_project_records
+    from app.secrets.store import active
+    if any(active(settings.SCANS_DIR,scan.id) for scan in db.query(Scan).filter(Scan.project_id==id).all()):raise HTTPException(409,'Сначала остановите поиск секретов')
     try:
-        ids=remove_project_records(db,project,NetworkPart,Scan,payload.expected_count,payload.delete_reports)
+        ids=remove_project_records(db,project,NetworkPart,Scan,payload.expected_count,payload.delete_reports,root=settings.SCANS_DIR)
     except ValueError as exc:
         db.rollback()
         raise HTTPException(409,str(exc))

@@ -1,0 +1,23 @@
+{
+  "Documents": {
+    "HR/Staff-example.xlsx": {
+      "size": "2.1 KB",
+      "ctime_epoch": "2026-11-06 09:00:00",
+      "mtime_epoch": "2026-11-06 10:30:00",
+      "atime_epoch": "2026-11-06 10:35:00"
+    },
+    "IT/Readme.txt": {
+      "size": "128 B",
+      "ctime_epoch": "2026-11-06 09:00:00",
+      "mtime_epoch": "2026-11-06 10:30:00",
+      "atime_epoch": "2026-11-06 10:35:00"
+    },
+    "Финансы/Бюджет-пример.xlsx": {
+      "size": "2.1 KB",
+      "ctime_epoch": "2026-11-06 09:00:00",
+      "mtime_epoch": "2026-11-06 10:30:00",
+      "atime_epoch": "2026-11-06 10:35:00"
+    }
+  },
+  "Public": {}
+}

@@ -54,7 +54,8 @@ class ProcessTests(unittest.TestCase):
         migrate(engine); migrate(engine)
         with engine.connect() as conn:
             self.assertEqual(conn.execute(text('SELECT target,speed FROM scans')).one(), ('existing','normal'))
-            self.assertEqual(conn.execute(text('SELECT count(*) FROM scanner_schema_version')).scalar(),9)
+            self.assertEqual(conn.execute(text('SELECT count(*) FROM scanner_schema_version')).scalar(),10)
         self.assertIn('comment', {c['name'] for c in inspect(engine).get_columns('scans')})
+        self.assertIn('smb_job', {c['name'] for c in inspect(engine).get_columns('scans')})
         self.assertIn('retry_of_id', {c['name'] for c in inspect(engine).get_columns('scans')})
         self.assertFalse(inspect(engine).has_table('observation_shares'))

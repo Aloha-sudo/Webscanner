@@ -1,0 +1,10 @@
+const assert=require('node:assert/strict'),fs=require('fs'),vm=require('vm'),path=require('path'),babel=require('@babel/core');
+const code=babel.transformSync(fs.readFileSync(path.join(__dirname,'../src/utils/smbCommander.ts'),'utf8'),{filename:'smbCommander.ts',presets:['@babel/preset-typescript'],plugins:['@babel/plugin-transform-modules-commonjs']}).code;
+const box={exports:{}};vm.runInNewContext(code,box);const {parseSmbCommand:parse,resolveSmbPath:resolve}=box.exports;
+assert.equal(parse('cd ..','folder/sub').path,'folder');assert.equal(parse('cd /','folder').path,'');
+assert.equal(parse('cat "Мой файл.txt"','Docs').path,'Docs/Мой файл.txt');assert.equal(parse('get','Docs','Docs/file.txt').action,'download');assert.equal(parse('rights "file.txt"','Docs').action,'permissions');
+assert.equal(parse('help','').action,'help');assert.equal(parse('pwd','folder').action,'pwd');
+for(const value of ['rm -rf /','whoami','ls; echo secret','ssh server','constructor file','__proto__ file'])assert.throws(()=>parse(value,''));
+for(const value of ['../../file','C:/file','folder/*','folder/\u0000'])assert.throws(()=>resolve('',value));
+assert.equal(parse('get "file;whoami.txt"','').path,'file;whoami.txt','arguments are literal paths, never shell commands');
+console.log('PASS: fixed SMB commands, quoted Unicode paths, parent/root navigation and rejection of shell commands/path escape');

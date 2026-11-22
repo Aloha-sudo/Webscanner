@@ -1,6 +1,7 @@
 import { useSyncExternalStore } from 'react';
 import { getLanguage, subscribeLanguage } from './i18n/core';
 import { Routes, Route } from 'react-router-dom';
+import SecretsPage from './pages/SecretsPage';
 import TeamPage from './pages/TeamPage';
 import Layout from './components/Layout';
 import ReportsPage from './pages/ReportsPage';
@@ -13,6 +14,7 @@ function App() {
     <Layout>
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/secrets" element={<SecretsPage />} />
         <Route path="/team" element={<TeamPage />} />
         <Route path="/reports" element={<ReportsPage />} />
         <Route path="/scan/:id" element={<ScanDetailPage />} />

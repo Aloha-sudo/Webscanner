@@ -391,11 +391,15 @@ def update_scan_meta(
 @router.delete("/{scan_id}", status_code=204)
 def delete_scan(scan_id: int, db: Session = Depends(get_db)):
     """Удалить скан."""
-    scan = db.query(Scan).filter(Scan.id == scan_id).first()
+    scan = db.query(Scan).filter(Scan.id == scan_id).with_for_update().first()
     if not scan:
         raise HTTPException(status_code=404, detail="Scan not found")
     if scan.status in (ScanStatus.QUEUED, ScanStatus.RUNNING):
         raise HTTPException(409, 'Сначала отмените скан')
+    if (scan.smb_job or {}).get('status') in ('queued', 'running'):
+        raise HTTPException(409, 'Сначала остановите SMB-проверку')
+    from app.secrets.store import active
+    if active(settings.SCANS_DIR,scan_id):raise HTTPException(409,'Сначала остановите поиск секретов')
     db.delete(scan)
     db.commit()
     shutil.rmtree(os.path.join(settings.SCANS_DIR, str(scan_id)), ignore_errors=True)
